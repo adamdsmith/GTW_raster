@@ -17,17 +17,45 @@ knitr::opts_chunk$set(message=FALSE, warning=FALSE, echo=TRUE,
                       fig.path="./Rpubs/figs/", cache.path="./Rpubs/cache/")
 ```
 
-## Load required packages
+## Load required R packages
 
 ```{r load_packages}
 library(raster)
 library(rgdal)
+library(rasterVis)
+#save(jam, dem, precip, raw_precip, file = "./Data/JAM_data.rda")
 ```
 
 ## Get some data to play with
 
+We'll start with two example raster processing applications.  One is contrived for the purposes of this module and the second is a recent application on a National Wildlife Refuge.
+
 ```{r get_data}
+# Jamaica boundary, DEM, and monthly precipitation averages
+load("./Data/JAM_data.rda", verbose = TRUE)
 
-#PR <- 
+# Lake Mattamuskeet NAIP 2014 color-infrared imagery 
+# Originally 1-m resolution; resampled to 9 m resolution
+LM <- brick("./Data/LM_9m.tif")
+```
 
+```{r Jamaica}
+plot(jam) # Admin boundary
+plot(dem) # Elevation data
+levelplot(dem)
+levelplot(precip)
+plot(jam, add = TRUE)
+
+pal <- colorNumeric(terrain.colors(32), values(dem),
+                    na.color = "transparent")
+leaflet() %>% addTiles() %>% addRasterImage(dem, colors = pal, opacity = 0.5) %>%
+  addLegend(pal = pal, values = values(dem), title = "Elevation (m)")
+```
+
+
+
+
+```{r Lake_Mat}
+plot(LM)
+plotRGB(LM, r=1, g=2, b=3)
 ```
