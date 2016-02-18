@@ -1,0 +1,33 @@
+---
+title: "Raster Processing in R"
+author: "Adam Smith"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    theme: united
+    highlight: textmate
+    css: ../custom.css
+---
+
+```{r set-options, echo=FALSE, cache=FALSE}
+options(width = 250, scipen=999)
+knitr::opts_chunk$set(message=FALSE, warning=FALSE, echo=TRUE,
+                      fig.path="./Rpubs/figs/", cache.path="./Rpubs/cache/")
+```
+
+## Load required packages
+
+```{r load_packages}
+library(raster)
+library(rgdal)
+```
+
+## Get some data to play with
+
+```{r get_data}
+
+#PR <- 
+
+```
