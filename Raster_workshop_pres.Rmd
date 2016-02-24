@@ -1,0 +1,74 @@
+---
+title: "Geospatial Training Workshop: \nRaster Processing in R"
+author: "Adam Smith"
+date: "1-2 March 2016"
+output:
+  ioslides_presentation:
+    logo: usfws_refuges_logos.png
+    widescreen: true
+    transition: faster
+    smaller: true
+    css: bigger_logos.css
+    fig_caption: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+## Overview
+
+This module will take us through:
+
+- use and benefits of R as a GIS tool
+- basic I/O operations with raster (and vector)
+- basic raster operations/conversions
+- simple raster calculations
+- raster &harr; vector conversion
+
+## Overview
+
+It assumes you know the basics about:
+
+- working in R
+- raster data
+
+## Acknowledgments
+
+This material represents a conglomeration of original material as well as parts adapted from:
+
+- NEON's [Data Carpentry lessons](http://data-lessons.github.io/NEON-R-Spatial-Raster/)
+- Francesco Tonini's [Introduction to using R as a GIS](https://github.com/f-tonini/GIS610_SpatialR)
+- Barry Rowlingson's [UseR 2012 Spatial Data Workshop](http://www.maths.lancs.ac.uk/~rowlings/Teaching/UseR2012/)
+- Robert Hijmans's [`raster` package vignette](https://cran.r-project.org/web/packages/raster/raster.pdf)
+
+This material is by no means comprehensive. 
+
+The list above is a good place to start for more details.
+
+## Raster data
+
+- divides space in cells (pixels; rectangles) of equal size (for a given coordinate reference system)
+- contrasts with discrete (vector) spatial data (points, lines, polygons)
+
+## Raster data
+
+<p align="center">
+  <img src="./images/raster_concept.png" alt="Source: National Ecological Observatory Network (NEON)" align="middle" style="width: 575px;"/>
+</p>
+
+## IMP development/assembly
+
+- **Discussion**
+
+    - *PRO*: IMPs ready for use; lower maintenance
+    - *CON*: completing IMPs will take longer
+    - Encouraging adherence to protocols?
+    
+<div class="notes">
+
+- The adapted site-specific protocols in the IMP will be ready for use and posterity; plus, we won't have to go back and replace ISIs with site-specific protocols or, as I mentioned earlier, find similar ISIs among refuges and generalize up to a protocol framework
+- The waiting is the hardest part; completing IMPs will take longer (for any given refuge) than under the current process but I suspect/expect that over a given time length (e.g., 7 years) more IMPs will be completed this way than under the current approach and they'll contain actual protocols that, hopefully, link to specific management objectives rather than ISIs 
+- In my experience, just because you have a protocol doesn't mean a particular refuge is going to follow it.  How can we encourage adherence to protocols?  Withhold funding opportunities, similar to what was suggested for not turning in progress reports/data for funded projects?
+
+</div> 
+
