@@ -4,20 +4,22 @@ author: "Adam Smith"
 date: "1-2 March 2016"
 output:
   ioslides_presentation:
-    logo: usfws_refuges_logos.png
-    widescreen: true
-    transition: faster
-    smaller: true
     css: bigger_logos.css
-    fig_caption: true
+    fig_caption: yes
+    highlight: pygments
+    logo: images/usfws_refuges_logos.png
+    transition: faster
+    widescreen: yes
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(message=FALSE, warning=FALSE, echo=FALSE,
+                      fig.width = 10,
+                      fig.height = 5,
+                      comment = "#>",  
+                      collapse = TRUE)
 ```
-## Overview
-
-This module will take us through:
+## Module Overview
 
 - use and benefits of R as a GIS tool
 - basic I/O operations with raster (and vector)
@@ -25,18 +27,16 @@ This module will take us through:
 - simple raster calculations
 - raster &harr; vector conversion
 
-## Overview
+**Prerequisites**
 
-It assumes you know the basics about:
-
-- working in R
+- working in R  
 - raster data
 
 ## Acknowledgments
 
 This material represents a conglomeration of original material as well as parts adapted from:
 
-- NEON's [Data Carpentry lessons](http://data-lessons.github.io/NEON-R-Spatial-Raster/)
+- NEON's [Data Tutorial Series](http://neondataskills.org/tutorial-series/)
 - Francesco Tonini's [Introduction to using R as a GIS](https://github.com/f-tonini/GIS610_SpatialR)
 - Barry Rowlingson's [UseR 2012 Spatial Data Workshop](http://www.maths.lancs.ac.uk/~rowlings/Teaching/UseR2012/)
 - Robert Hijmans's [`raster` package vignette](https://cran.r-project.org/web/packages/raster/raster.pdf)
@@ -47,28 +47,218 @@ The list above is a good place to start for more details.
 
 ## Raster data
 
-- divides space in cells (pixels; rectangles) of equal size (for a given coordinate reference system)
-- contrasts with discrete (vector) spatial data (points, lines, polygons)
+- divides space in cells (pixels; rectangles) of equal size
+    - for a given coordinate reference system (CRS)
 
-## Raster data
+<div class="centered">
+![](./images/raster_concept.png)
+</div>
 
-<p align="center">
-  <img src="./images/raster_concept.png" alt="Source: National Ecological Observatory Network (NEON)" align="middle" style="width: 575px;"/>
-</p>
+## Vector data
 
-## IMP development/assembly
+- discrete spatial data (points, lines, polygons)
+- think `shapefile` with/without attributes
 
-- **Discussion**
+<div class="centered">
+![](./images/pnt_line_poly.png)
+</div>
 
-    - *PRO*: IMPs ready for use; lower maintenance
-    - *CON*: completing IMPs will take longer
-    - Encouraging adherence to protocols?
+----
+
+<div class="centered">
+```{r NCTC, echo=FALSE}
+library(raster); library(rgdal); library(leaflet)
+NCTC <- readOGR("./data", "nctc_boundary", verbose = FALSE)
+dem <- raster('./data/dem.img')
+pal <- colorNumeric(terrain.colors(10), values(dem))
+
+# Create map
+leaflet() %>%
+  addTiles("http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+           group = "Aerial") %>%
+  addTiles("http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
+           group = "Terrain") %>%
+  addRasterImage(dem, colors = terrain.colors(10), opacity = 0.65, group = "Elevation",
+                 maxBytes = 8 * 1024 * 1024) %>%
+  addMarkers(lng = -77.803947, lat = 39.487872, 
+             popup = "YOU ARE HERE") %>%
+  addPolygons(data = NCTC, fillOpacity = 0) %>%
+  hideGroup("Elevation") %>%
+  addLegend(pal = pal, values = values(dem), title = "Elevation (m)") %>%
+  addLayersControl(baseGroups = c("Aerial", "Terrain"),
+                   overlayGroups = c("Elevation"),
+                   options = layersControlOptions(collapsed = FALSE))
+
+```
+</div>
+
+## R as a GIS
+
+<div class="centered">
+![Source: WageningenUR](./images/system_overview.png)
+</div>
+
+## RStudio
+
+Conveniences
+- [too many to list...](http://www.rstudio.com/wp-content/uploads/2016/01/rstudio-IDE-cheatsheet.pdf)
+- R Projects
+
+<div id="handson" markdown="1">
+
+<h2> Hands On #1: Create R Project for today's module</h2>
+
+1. Open RStudio
+2. `File` &rarr; `New Project...` &rarr; `Existing Directory`
+3. Navigate to D:/GTW_raster
+4. Click `Create Project`
+
+</div>
+
+## Just a few R basics
+
+- Object assignment (variables)
+    - `<-` or `=`
+
+```{r}
+my_name <- "Adam" 
+my_name
+n_children = 3
+n_children
+```  
+
+## Just a few R basics
+
+- Data types
+    - store different kinds of data
+    - main types: `integer`, `numeric`, `character` (string), and `logical` (TRUE/FALSE)
     
-<div class="notes">
+```{r}
+class(my_name)
+class(n_children)
+is.numeric(n_children)
 
-- The adapted site-specific protocols in the IMP will be ready for use and posterity; plus, we won't have to go back and replace ISIs with site-specific protocols or, as I mentioned earlier, find similar ISIs among refuges and generalize up to a protocol framework
-- The waiting is the hardest part; completing IMPs will take longer (for any given refuge) than under the current process but I suspect/expect that over a given time length (e.g., 7 years) more IMPs will be completed this way than under the current approach and they'll contain actual protocols that, hopefully, link to specific management objectives rather than ISIs 
-- In my experience, just because you have a protocol doesn't mean a particular refuge is going to follow it.  How can we encourage adherence to protocols?  Withhold funding opportunities, similar to what was suggested for not turning in progress reports/data for funded projects?
+#by default the numeric value is stores as double (float) precision.
+#to specify a value is an integer, you can use the letter `L` after the number
+x <- 5L```  
+    - Data type
 
-</div> 
 
+## Navigating files in R
+
+Pathnames in R
+- Pathnames are character strings (within quotes, "like this")
+    - single (`'single'`) or double quotes (`"double"`) work
+    - Example: `class("this is a character string")
+> - Pathnames in R require forward slashes `/`
+      - Example: `"C:/This/is/a/valid/path/to/some_file.txt"`
+> - Working directory
+      - Current (`getwd()`)
+          - should be ""
+      - Change (`setwd()`)
+> - Pathnames relative to the working directory
+      - Current directory denoted with a single period `.`
+    - Go back a directory with two periods `..`
+
+## R Packages Needed
+
+Make sure you have these packages installed (use install.packages() function in R) or some scripts will not run. In order to use some of the useful functionalities that come with each package, we need to call them into our current R session using the library() or require() command.
+
+```{r load packages, message = FALSE, warning=FALSE}
+# These packages should all be installed on your machine
+# If not, use: install.packages("package_name")
+# For example: install.packages("maptools")
+library(rgdal)        # R bindings for the Geospatial Data Abstraction Library    
+library(maptools)     # for the 'readShapeSpatial' function
+library(raster)       # Primary package for working with rasters in R
+# library(sp)         # For vector data/shapefiles; loaded with raster package
+library(rasterVis)    # Some handy visualization functions for raster data
+```
+
+## Getting Help
+
+`R` offers a comprehensive built-in help system. At the program's command prompt you can use any of the following:
+
+* **help.start()**   # general help  
+* **?foo**           # help about function foo  
+* **apropos("foo")** # list all functions containing string foo  
+* **example(foo)**   # show an example of function foo (if available)
+
+
+----
+
+<div id="handson" markdown="1">
+<h2> Hands On #1: Create R Project and explore relative pathnames</h2>
+
+To Do:
+
+1. Create a new R Project for an existing directory
+    - D:/GTW_raster
+2. View contents of `data` folder using relative pathname
+    
+</div>
+
+
+
+
+
+----
+
+<div id="handson" markdown="1">
+<h2> Hands On: Import Line and Point Shapefiles</h2>
+
+Using the steps above, import:
+- West Virginia land cover raster *layer* (WV_habitat.img)
+- NAIP color infrared photos as a raster *brick* 
+- NCTC boundary (nctc_boundary) shapefile
+- plot the `R`. Call the Harv_roads object `lines_HARV` and the HARVtower_UTM18N
+`point_HARV`.
+
+Answer the following questions:
+
+1. What type of `R` spatial object is created when you import each layer?
+2. What is the `CRS` and `extent`for each object?
+3. Do the files contain, points, lines or polygons?
+4. How many spatial objects are in each file?
+</div>
+
+## Hands On #? Solution
+```{r import-point-line, echo=FALSE, results="hide" }
+# import line shapefile
+lines_HARV <- readOGR("NEON-DS-Site-Layout-Files/HARV",layer = "HARV_roads")
+# import point shapefile
+point_HARV <- readOGR("NEON-DS-Site-Layout-Files/HARV", layer="HARVtower_UTM18N")
+
+# 1
+class (lines_HARV)
+class (point_HARV)
+
+# 2
+crs(lines_HARV)
+extent(lines_HARV)
+crs(point_HARV)
+extent(point_HARV)
+
+# 3 
+#lines_HARV contains only lines and point_HARV contains only 1 point
+
+# 4 -> numerous ways to find this; lines_HARV=13,
+length(lines_HARV)  #easiest, but not previously taught
+lines_HARV  #look at 'features'
+attributes(lines_HARV)  #found in the $data section as above
+
+# Alternative code for 1-4: view metadata/attributes all at once
+lines_HARV
+attributes(lines_HARV)
+
+```
+
+## Why use R as a GIS?
+
+- Solve complex problems
+    - e.g., custom functions
+- Automation
+    - combine spatial processing with subsequent analysis
+- Make work reproducible
+   - promotes collaboration
+   - informs your future self
