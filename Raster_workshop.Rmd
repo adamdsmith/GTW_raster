@@ -38,30 +38,6 @@ Here, we'll use the `setwd` function to tell R where the module 1 folder is loca
 # setwd('D:/GTW_raster')
 ```
 
-## R Packages Needed
-
-Make sure you have these packages installed (use install.packages() function in R) or some scripts will not run. In order to use some of the useful functionalities that come with each package, we need to call them into our current R session using the library() or require() command.
-
-```{r load packages, message = FALSE, warning=FALSE}
-# These packages should all be installed on your machine
-# If not, use: install.packages("package_name")
-# For example: install.packages("maptools")
-library(rgdal)        # R bindings for the Geospatial Data Abstraction Library    
-library(maptools)     # for the 'readShapeSpatial' function
-library(raster)       # Primary package for working with rasters in R
-# library(sp)         # For vector data/shapefiles; loaded with raster package
-library(rasterVis)    # Some handy visualization functions for raster data
-```
-
-### Getting Help
-
-`R` offers a comprehensive built-in help system. At the program's command prompt you can use any of the following:
-
-* **help.start()**   # general help  
-* **?foo**           # help about function foo  
-* **apropos("foo")** # list all functions containing string foo  
-* **example(foo)**   # show an example of function foo (if available)
-
 ## About Raster Data
 Raster or "gridded" data are saved on a regular grid which is rendered on a map
 as pixels. Each pixel contains a value that represents an area on the Earth's 

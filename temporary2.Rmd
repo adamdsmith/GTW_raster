@@ -1,0 +1,67 @@
+
+
+
+
+
+
+----
+
+<div id="handson" markdown="1">
+<h2> Hands On: Import Line and Point Shapefiles</h2>
+
+Using the steps above, import:
+- West Virginia land cover raster *layer* (WV_habitat.img)
+- NAIP color infrared photos as a raster *brick* 
+- NCTC boundary (nctc_boundary) shapefile
+- plot the `R`. Call the Harv_roads object `lines_HARV` and the HARVtower_UTM18N
+`point_HARV`.
+
+Answer the following questions:
+
+1. What type of `R` spatial object is created when you import each layer?
+2. What is the `CRS` and `extent`for each object?
+3. Do the files contain, points, lines or polygons?
+4. How many spatial objects are in each file?
+</div>
+
+
+## Hands On #? Solution
+```{r import-point-line, eval=FALSE, results="hide" }
+# import line shapefile
+lines_HARV <- readOGR("NEON-DS-Site-Layout-Files/HARV",layer = "HARV_roads")
+# import point shapefile
+point_HARV <- readOGR("NEON-DS-Site-Layout-Files/HARV", layer="HARVtower_UTM18N")
+
+# 1
+class (lines_HARV)
+class (point_HARV)
+
+# 2
+crs(lines_HARV)
+extent(lines_HARV)
+crs(point_HARV)
+extent(point_HARV)
+
+# 3 
+#lines_HARV contains only lines and point_HARV contains only 1 point
+
+# 4 -> numerous ways to find this; lines_HARV=13,
+length(lines_HARV)  #easiest, but not previously taught
+lines_HARV  #look at 'features'
+attributes(lines_HARV)  #found in the $data section as above
+
+# Alternative code for 1-4: view metadata/attributes all at once
+lines_HARV
+attributes(lines_HARV)
+
+```
+
+## Why use R as a GIS?
+
+- Solve complex problems
+- e.g., custom functions
+- Automation
+- combine spatial processing with subsequent analysis
+- Make work reproducible
+- promotes collaboration
+- informs your future self

@@ -57,6 +57,10 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 95%;
 }
 
+slides > slide.dark {
+  background: #f2f2f2 !important;
+}
+
 slides > slide {
     color: #333333;
 }
@@ -76,4 +80,14 @@ div#handson h2 {
   border-bottom: 2px solid #333333;
   margin-top: 0;
   margin-bottom: 1em;
+}
+
+.caption {
+  text-align: middle;
+  vertical-align: middle;
+  font-size: 0.4em;
+}
+
+code {
+    background-color: #F5F5F5;
 }
