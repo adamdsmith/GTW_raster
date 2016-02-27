@@ -21,6 +21,8 @@ knitr::opts_chunk$set(message=FALSE, warning=FALSE, echo=TRUE,
 ```
 ## Module Overview
 
+Follow along at [rpubs.com/adamsmith_fws/GTW_raster](http://rpubs.com/adamsmith_fws/GTW_raster)
+
 - Use and benefits of R as a GIS tool
 - Basic I/O operations with raster (and vector)
 - Basic raster operations/conversions
@@ -120,7 +122,7 @@ leaflet() %>%
 >      - `"C:/This/pathname/is/formatted/correctly.txt"`
     
 > - Working directory
->      - view current with `getwd()`; should be "D:/GTW_raster"
+>      - view current with `getwd()`
 >      - change with `setwd()`
     
 > - Using pathnames relative to the working directory
@@ -131,23 +133,24 @@ leaflet() %>%
 
 <div id="handson" markdown="1">
   
-<h2> Hands On #1: R Projects and relative pathnames</h2>
+<h2>Hands On #1: New R Project and using relative pathnames</h2>
 
 1. In R Studio, create an R Project for today's module
     - Find Source, Console, Environment, and Files/Plots panes
     - `File` &rarr; `New Project...` &rarr; `Existing Directory`
-    - Navigate to "D:/GTW_raster"
-    - Click `Create Project`
+    - Navigate to "D:/GTW_raster" and click `Create Project`
 2. Experiment with relative pathnames
+    - view current working directory: `getwd()`
     - change working directory to `data` folder: `setwd("relative/path")`
     - view list of files: `dir()`
     - change working directory back to the `GTW_raster` folder
 </div>
 
-# R Basics 
+# R Basics | A cursory review
 
 ## Object assignment (variables)
 - Left-facing arrow (`<-`) or equals sign (`=`)
+    - in RStudio, `alt + hyphen` for `<-`
 
 ```{r}
 a_string <- "NCTC" 
@@ -202,28 +205,78 @@ bird_counts <- c(1, 5, NULL, 8, NULL)
 bird_counts
 ```
 
-## Data Structures
+# Data Structures
 
-- Vectors: 1D arrays; can hold `numeric`, `character`, or `logical` data
+## Vectors
+- 1D arrays; can hold `numeric`, `character`, or `logical` data
+- single data type
+    
+```{r}
+eg <- c("This", "is", "a", "character", "vector")
+eg
+eg2 <- c(1, 2, 3, 4, 5, 6, 7)
+eg2
+all(is.vector(eg), is.vector(eg2))
+```
 
-> - Matrices: 2D vectors (rows and columns); only `numeric` data
->      - single-band rasters
+## Matrices
+- `numeric` vector stored in 2 dimensions (e.g., x-y direction)
+- single-band rasters (with addn'l spatial metadata)
 
-> - Data Frames: 2D (rows and columns); most common data structure
->      - each column is a vector and MUST be the same length
->      - mixed data types allowed
+```{r}
+data <- rnorm(8)
+mat <- matrix(data, nrow = 2, ncol = 4)
+is.matrix(mat)
+```
 
-> - Arrays: matrices (`numeric`) with 3D+
->      - multi-band rasters
+## Data Frames
+- 2D (rows and columns); most common data structure
+- each column is a vector of the *same* length
+- mixed data types allowed
 
-> - Lists: containers to any combination of objects or data structures
+```{r}
+# By default, R coerces character vectors to factors
+df <- data.frame(char = c("a", "b"), num = rnorm(2), stringsAsFactors = FALSE)
+df
+str(df) 
+```
 
-# Importing vector and raster data
+## Arrays
+
+- `numeric` vector stored in 1 or more dimensions
+- multi-band rasters (& spatial metadata)
+
+```{r}
+arr <- array(rnorm(8), dim = c(2, 2, 2))
+arr
+```
+
+## Lists
+
+- containers for any combination of objects or data structures
+
+```{r}
+lst <- list(eg, mat, df, arr, list(eg, eg2))
+str(lst) 
+```
+
+## Getting Help in R
+
+- `?function` will give you the associated help page (`?proj4string`)
+- `example(function)` runs an example(s) of the function, if available
+- `??searchterm` searches in all packages on CRAN (`??spTransform`)
+- [rseek.org](http://rseek.org) is the R Google
+- [Google](http://www.google.com) your error message with package ("Failure during raster IO" raster R)
+- Search tags in [Stack Overflow](http://stackoverflow.com/) (e.g., [R] [raster] [projection])
+- [StackExchange](http://stats.stackexchange.com): like Stack Overflow but for statistics 
+- [Crantastic](http://crantastic.org): search through packages on CRAN 
+
+# Importing data into R | Data Tables and Spatial Data
 
 ## Required R Packages
 
 - Vector data: `rgdal` and `sp`
-- Raster data: `raster`
+- Raster data: `raster` and `rasterVis`
 - Install with `install.packages("package name")`
 - Load functionality with `library()` or `require()`
 
@@ -233,17 +286,27 @@ library(rgdal)        # R bindings for the Geospatial Data Abstraction Library
 library(raster)       # Primary package for working with rasters in R
 # library(sp)         # For vector data/shapefiles; loaded with raster package
 library(rasterVis)    # Some handy visualization functions for raster data
+library(dplyr)        # Handy tools for data manipulation
 ```
 
-## Getting Help
+## Import Data Tables
 
-`R` offers a comprehensive built-in help system. At the program's command prompt you can use any of the following:
+- *easiest* import format is plain text, especially CSV (`read.table` or `read.csv`)
+    - R imports as a `data.frame` by default
+- many other options
+    - R's native structure (see `?save`)
+    - databases (MySQL, SQLite, Access)
+    - Excel, SAS, SPSS, DBF, etc.
 
-* **help.start()**   # general help  
-* **?foo**           # help about function foo  
-* **apropos("foo")** # list all functions containing string foo  
-* **example(foo)**   # show an example of function foo (if available)
+## Example CSV import
 
+```{r}
+download.file(url = "http://tinyurl.com/testCSV", destfile = "./data/test.csv")
+test <- read.table("./data/test.csv", header = TRUE, sep = ",")
+test <- read.csv("./data/test.csv", header = TRUE)
+class(test)
+glimpse(test)
+```
 
 ## Import Shapefiles
 
@@ -251,49 +314,27 @@ We will use the `rgdal` package to work with vector data in `R`. Notice that the
 `sp` package automatically loads when `rgdal` is loaded. We will also load the
 `raster` package so we can explore raster and vector spatial metadata using similar commands.
 
-```{r load-libraries, eval=FALSE }
-
-# load required libraries
-# for vector work; sp package will load with rgdal.
-library(rgdal)  
-# for metadata/attributes- vectors or rasters
-library(raster) 
-
-# set working directory to the directory location on your computer where
-# you downloaded and unzipped the data files for the lesson
-# setwd("pathToDirHere")
+```{r}
+download.file(url = "https://github.com/adamdsmith/GTW_raster/raw/master/Data/wv.zip",
+              destfile = "./data/wvshape.zip")
+unzip("./data/wvshape.zip", exdir = "./data")
+wv <- readOGR(dsn = "./data",   # folder name (`dsn` argument)
+              layer = "wv")     # file name without extension
 ```
 
-The shapefiles that we will import are:
+## Examine loaded shapefile
 
-* A polygon shapefile representing our field site boundary, 
-* A line shapefile representing roads, and 
-* A point shapefile representing the location of the Fisher   
-<a href="http://www.neoninc.org/science-design/collection-methods/flux-tower-measurements" target="_blank">flux tower</a> 
-located at the
-<a href="http://www.neoninc.org/science-design/field-sites/harvard-forest" target="_blank"> NEON Harvard Forest field site</a>.
-
-The first shapefile that we will open contains the boundary of our study area
-(or our Area Of Interest or AOI, hence the name `aoiBoundary`). To import 
-shapefiles we use the `R` function `readOGR()`.
-
-`readOGR` requires two components:
-
-1. The directory where our shapefile lives: `NEON-DS-Site-Layout-Files/HARV`
-2. The name of the shapefile (without the extension): `HarClip_UTMZ18`
-
-Let's import our AOI.
-
-```{r Import-Shapefile, eval=FALSE}
-
-# Import a polygon shapefile: readOGR("path","fileName")
-# no extension needed as readOGR only imports shapefiles
-aoiBoundary_HARV <- readOGR("NEON-DS-Site-Layout-Files/HARV",
-                            "HarClip_UTMZ18")
-
+```{r}
+# View description. Note the coordinate bounding box and projection info
+summary(wv)
+# just look at projection
+proj4string(cp.poly)
+# make a simple plot
+plot(cp.poly, axes=T, col='blue', main = "CO Plateau")
 ```
 
 ## Spatial Metadata
+
 Key metadata for all shapefiles include:
 
 1. **Object Type:** the class of the imported object. 
@@ -318,3 +359,4 @@ extent(aoiBoundary_HARV)
 aoiBoundary_HARV
 ```
 
+download.file(url = 'https://raw.githubusercontent.com/adamdsmith/GTW_raster/master/test_script.R', destfile = 'downloadOK.R', method = 'auto')
