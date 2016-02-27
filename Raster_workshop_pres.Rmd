@@ -4,7 +4,6 @@ author: "Adam Smith"
 date: "1-2 March 2016"
 output:
   ioslides_presentation:
-    keep_md: true
     css: workshop.css
     fig_caption: yes
     highlight: pygments
@@ -38,7 +37,7 @@ knitr::opts_chunk$set(message=FALSE, warning=FALSE, echo=TRUE,
 
 This material represents a conglomeration of original material as well as parts adapted from:
   
-  - NEON's [Data Tutorial Series](http://neondataskills.org/tutorial-series/)
+- NEON's [Data Tutorial Series](http://neondataskills.org/tutorial-series/)
 - Francesco Tonini's [Introduction to using R as a GIS](https://github.com/f-tonini/GIS610_SpatialR)
 - Barry Rowlingson's [UseR 2012 Spatial Data Workshop](http://www.maths.lancs.ac.uk/~rowlings/Teaching/UseR2012/)
 - Robert Hijmans's [`raster` package vignette](https://cran.r-project.org/web/packages/raster/raster.pdf)
@@ -106,6 +105,11 @@ leaflet() %>%
 
 - [too many conveniences to list...](http://www.rstudio.com/wp-content/uploads/2016/01/rstudio-IDE-cheatsheet.pdf)
 - R Projects
+
+<div class="centered">
+  ![](./images/RStudio.png)
+</div>
+
   
 ## Navigating files in R
 
