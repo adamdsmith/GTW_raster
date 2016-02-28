@@ -41,112 +41,14 @@ This material represents a conglomeration of original material as well as parts 
   
 - NEON's [Data Tutorial Series](http://neondataskills.org/tutorial-series/)
 - Francesco Tonini's [Introduction to using R as a GIS](https://github.com/f-tonini/GIS610_SpatialR)
-- Barry Rowlingson's [UseR 2012 Spatial Data Workshop](http://www.maths.lancs.ac.uk/~rowlings/Teaching/UseR2012/)
+- Wageningen UR's [Geoscripting workshop](https://geoscripting-wur.github.io/)
 - Robert Hijmans's [`raster` package vignette](https://cran.r-project.org/web/packages/raster/raster.pdf)
 
-This material is by no means comprehensive. 
+Today's module is by no means comprehensive.  
 
-The list above is a good place to start.
+For more details, the list above is a good place to start.
 
 See also: [Applied Spatial Data Analysis with R](http://www.springer.com/us/book/9781461476177)
-
-## Raster data
-
-- Divides space in cells (pixels; rectangles) of equal size
-    - for a given coordinate reference system (CRS)
-- Can represent continuous or categorical data
-    - examples?
-
-<div class="centered">
-  ![](./images/raster_concept.png)
-</div>
-  
-## Vector data
-
-- Discrete spatial data (points, lines, polygons)
-- Think `shapefile` with/without attributes
-
-<div class="centered">
-  ![](./images/pnt_line_poly.png)
-</div>
-  
-----
-  
-<div class="centered">
-```{r NCTC, eval=FALSE, echo=FALSE}
-library(raster); library(rgdal); library(leaflet)
-NCTC <- readOGR("./data", "nctc_boundary", verbose = FALSE)
-dem <- raster('./data/dem.img')
-pal <- colorNumeric(terrain.colors(10), values(dem))
-
-# Create map
-leaflet() %>%
-  addTiles("http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-           group = "Aerial") %>%
-  addTiles("http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
-           group = "Terrain") %>%
-  addRasterImage(dem, colors = terrain.colors(10), opacity = 0.65, group = "Elevation",
-                 maxBytes = 8 * 1024 * 1024) %>%
-  addMarkers(lng = -77.803947, lat = 39.487872, 
-             popup = "YOU ARE HERE") %>%
-  addPolygons(data = NCTC, fillOpacity = 0) %>%
-  hideGroup("Elevation") %>%
-  addLegend(pal = pal, values = values(dem), title = "Elevation (m)") %>%
-  addLayersControl(baseGroups = c("Aerial", "Terrain"),
-                   overlayGroups = c("Elevation"),
-                   options = layersControlOptions(collapsed = FALSE))
-
-```
-</div>
-  
-## R as a GIS
-  
-<div class="centered">
-  ![Source: WageningenUR](./images/system_overview.png)
-</div>
-  
-## RStudio
-
-- [too many conveniences to list...](http://www.rstudio.com/wp-content/uploads/2016/01/rstudio-IDE-cheatsheet.pdf)
-- R Projects
-
-<div class="centered">
-  ![](./images/RStudio.png)
-</div>
-
-  
-## Navigating files in R
-
-- Pathnames are character strings
-    - single (`'single'`) or double (`"double"`) quotes work
-
-> - Pathnames in R require forward slashes `/`  
->      - `"C:/This/pathname/is/formatted/correctly.txt"`
-    
-> - Working directory
->      - view current with `getwd()`
->      - change with `setwd()`
-    
-> - Using pathnames relative to the working directory
->      - current directory denoted with a single period `.`; `setwd("./data")`
->      - go back a directory with two periods `..`; `setwd("..")`
-
-----
-
-<div id="handson" markdown="1">
-  
-<h2>Hands On #1: New R Project and using relative pathnames</h2>
-
-1. In R Studio, create an R Project for today's module
-    - Find Source, Console, Environment, and Files/Plots panes
-    - `File` &rarr; `New Project...` &rarr; `Existing Directory`
-    - Navigate to "D:/GTW_raster" and click `Create Project`
-2. Experiment with relative pathnames
-    - view current working directory: `getwd()`
-    - change working directory to `data` folder: `setwd("relative/path")`
-    - view list of files: `dir()`
-    - change working directory back to the `GTW_raster` folder
-</div>
 
 # R Data Types
 
@@ -263,6 +165,22 @@ lst <- list(eg, mat, df, arr, list(eg, eg2))
 str(lst) 
 ```
 
+## Navigating files in R
+
+- Pathnames are character strings
+    - single (`'single'`) or double (`"double"`) quotes work
+
+> - Pathnames in R require forward slashes `/`  
+>      - `"C:/This/pathname/is/formatted/correctly.txt"`
+    
+> - Working directory
+>      - view current with `getwd()`
+>      - change with `setwd()`
+    
+> - Using pathnames relative to the working directory
+>      - current directory denoted with a single period `.`; `setwd("./data")`
+>      - go back a directory with two periods `..`; `setwd("..")`
+
 ## Getting Help in R
 
 - `?function` will give you the associated help page (`?proj4string`)
@@ -274,6 +192,111 @@ str(lst)
 - [StackExchange](http://stats.stackexchange.com): like Stack Overflow but for statistics 
 - [Crantastic](http://crantastic.org): search through packages on CRAN 
 
+## RStudio
+
+- [too many conveniences to list...](http://www.rstudio.com/wp-content/uploads/2016/01/rstudio-IDE-cheatsheet.pdf)
+- R Projects
+
+<div class="centered">
+  ![](./images/RStudio.png)
+</div>
+
+----
+
+<div id="handson" markdown="1">
+  
+<h2>Hands On #1: R Project, object creating, and relative pathnames</h2>
+
+1. In R Studio, create an R Project for today's module
+    - `File` &rarr; `New Project...` &rarr; `Existing Directory` 
+    - Navigate to "D:/GTW_raster" and click `Create Project`
+2. Explore help files (e.g., `?c`, `?vector`, `?list`)
+3. Create `numeric` and `character` vectors; store in `data.frame`
+4. Create a `list` of multiple `data.frame`s
+5. Experiment with relative pathnames
+    - change working directory to `data` folder: `setwd("relative/path")`
+    - view list of files: `list.files()`
+    - change working directory back to the `GTW_raster` folder
+</div>
+
+
+# R as a GIS
+ 
+---- 
+<div class="centered">
+  ![Source: WageningenUR](./images/system_overview.png)
+</div>
+
+## Spatial Data I/O in R
+
+Vector data
+
+- I/O operations made possible by **OGR Simple Feature Library**
+- bindings in R provided by `rgdal` package
+
+Packages: `sp`, `rgdal`, and `rgeos`
+
+sp: importing, manipulating and exporting spatial data in R, and methods
+
+rgdal:  bindings to parts of the **OGR Simple Feature Library**
+    - variety of vector file formats including ESRI Shapefiles and kml. The OGR library is part of the widely used Geospatial Data Abstraction Library (GDAL). The GDAL library is the most useful freely-available library for reading and writing geospatial data. The GDAL library is well-documented (http://gdal.org/), but with a catch for R and Python programmers. The GDAL (and associated OGR) library and command line tools are all written in C and C++. Bindings are available that allow access from a variety of other languages including R and Python but the documentation is all written for the C++ version of the libraries. This can make reading the documentation rather challenging. Fortunaly, the rgdal package, providing GDAL bindings in R, is well documented with lots of examples. The same is valid for the Python libaries.
+
+Similarly, rgeos is an interface to the powerful Geometry Engine Open Source (GEOS) library for all kinds of operations on geometries (buffering, overlaying, area calculations, etc.).We will use the `rgdal` package to work with vector data in `R`. Notice that the
+`sp` package automatically loads when `rgdal` is loaded. We will also load the
+`raster` package so we can explore raster and vector spatial metadata using similar commands.
+
+
+In a previous lecture you saw the overall system architecture (see figure above) and you saw how to read and write vector data from/to file into your R environment. These vector read/write operations were made possible thanks to the OGR library. The OGR library is interfaced with R thanks to the rgdal package/binding. By analogy, raster data can be read/written thanks to the GDAL library. The figure above provides an overview of the connections between these elements. GDAL stands for Geospatial Data Abstraction Library. You can check the project home page at http://www.gdal.org/ and you will be surprised to see that a lot of the software you have used in the past to read gridded geospatial data use GDAL. (i.e.: ArcGIS, QGIS, GRASS, etc). In this lesson, we will use GDAL indirectly via the raster package, which uses rgdal extensively. However, it is possible to call GDAL functionalities directly through the command line (a shell is usually provided with the GDAL binary distribution you installed on your system), which is equivalent to calling a system() command directly from within R. In addition, if you are familiar with R and its string handling utilities, it should facilitate the building of the expression that have to be passed to GDAL.
+
+## Raster data
+
+- Divides space in cells (pixels; rectangles) of equal size
+    - for a given coordinate reference system (CRS)
+- Can represent continuous or categorical data
+    - examples?
+
+<div class="centered">
+  ![](./images/raster_concept.png)
+</div>
+  
+## Vector data
+
+- Discrete spatial data (points, lines, polygons)
+- Think `shapefile` with/without attributes
+
+<div class="centered">
+  ![](./images/pnt_line_poly.png)
+</div>
+  
+----
+  
+<div class="centered">
+```{r NCTC, eval=FALSE, echo=FALSE}
+library(raster); library(rgdal); library(leaflet)
+NCTC <- readOGR("./data", "nctc_boundary", verbose = FALSE)
+dem <- raster('./data/dem.img')
+pal <- colorNumeric(terrain.colors(10), values(dem))
+
+# Create map
+leaflet() %>%
+  addTiles("http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+           group = "Aerial") %>%
+  addTiles("http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
+           group = "Terrain") %>%
+  addRasterImage(dem, colors = terrain.colors(10), opacity = 0.65, group = "Elevation",
+                 maxBytes = 8 * 1024 * 1024) %>%
+  addMarkers(lng = -77.803947, lat = 39.487872, 
+             popup = "YOU ARE HERE") %>%
+  addPolygons(data = NCTC, fillOpacity = 0) %>%
+  hideGroup("Elevation") %>%
+  addLegend(pal = pal, values = values(dem), title = "Elevation (m)") %>%
+  addLayersControl(baseGroups = c("Aerial", "Terrain"),
+                   overlayGroups = c("Elevation"),
+                   options = layersControlOptions(collapsed = FALSE))
+
+```
+</div>
+  
 # Importing data into R | Data Tables and Spatial Data
 
 ## Required R Packages
@@ -311,18 +334,6 @@ class(test)
 glimpse(test)
 ```
 
-## Import Vector Data
-
-Packages: `sp`, `rgdal`, and `rgeos`
-
-sp: importing, manipulating and exporting spatial data in R, and methods
-
-rgdal:  bindings to parts of the **OGR Simple Feature Library**
-    - variety of vector file formats including ESRI Shapefiles and kml. The OGR library is part of the widely used Geospatial Data Abstraction Library (GDAL). The GDAL library is the most useful freely-available library for reading and writing geospatial data. The GDAL library is well-documented (http://gdal.org/), but with a catch for R and Python programmers. The GDAL (and associated OGR) library and command line tools are all written in C and C++. Bindings are available that allow access from a variety of other languages including R and Python but the documentation is all written for the C++ version of the libraries. This can make reading the documentation rather challenging. Fortunaly, the rgdal package, providing GDAL bindings in R, is well documented with lots of examples. The same is valid for the Python libaries.
-
-Similarly, rgeos is an interface to the powerful Geometry Engine Open Source (GEOS) library for all kinds of operations on geometries (buffering, overlaying, area calculations, etc.).We will use the `rgdal` package to work with vector data in `R`. Notice that the
-`sp` package automatically loads when `rgdal` is loaded. We will also load the
-`raster` package so we can explore raster and vector spatial metadata using similar commands.
 
 ```{r}
 download.file(url = "https://github.com/adamdsmith/GTW_raster/raw/master/Data/wv.zip",

@@ -58,8 +58,9 @@ attributes(lines_HARV)
 
 ## Why use R as a GIS?
 
-- Solve complex problems
-- e.g., custom functions
+- Explore your data in all its dimensions
+- Implement complex and custom made algorithms and functions
+- Integrated analysis chain from download to analysis
 - Automation
 - combine spatial processing with subsequent analysis
 - Make work reproducible
