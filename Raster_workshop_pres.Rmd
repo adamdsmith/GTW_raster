@@ -46,7 +46,9 @@ This material represents a conglomeration of original material as well as parts 
 
 This material is by no means comprehensive. 
 
-The list above is a good place to start for more details.
+The list above is a good place to start.
+
+See also: [Applied Spatial Data Analysis with R](http://www.springer.com/us/book/9781461476177)
 
 ## Raster data
 
@@ -146,35 +148,36 @@ leaflet() %>%
     - change working directory back to the `GTW_raster` folder
 </div>
 
-# R Basics | A cursory review
+# R Data Types
 
 ## Object assignment (variables)
 - Left-facing arrow (`<-`) or equals sign (`=`)
     - in RStudio, `alt + hyphen` for `<-`
 
 ```{r}
-a_string <- "NCTC" 
-a_string
-
 a_number = 3
 a_number
+
+a_string <- "NCTC" 
+a_string
 ```  
 
-## Data types
-- Main types: `numeric`, `character` (string), and `logical` (TRUE/FALSE)
+## Common data types
+- `numeric`, `character` (string), and `logical` (TRUE/FALSE)
 
 ```{r}
-class(a_string)
 is.numeric(a_number)
+class(a_string)
 
 # To specify an integer (default = numeric), use `L` after the number
 an_integer <- 5L
 class(an_integer)
 
-class(TRUE)
+a_logical <- TRUE
+class(a_logical)
 ```
 
-## Data types
+## Additional data types
 - `factor` (another way of storing character data; categorical data)
 
 ```{r}
@@ -186,7 +189,7 @@ levels(a_factor)
 - `Dates` (another time maybe...)
     - [`lubridate`](https://cran.r-project.org/web/packages/lubridate/index.html) package makes this considerably easier  
 
-## Missing Data in R
+## Missing Data
 
 - `NA`
     - used as you might expect; data is defined but missing
@@ -308,9 +311,16 @@ class(test)
 glimpse(test)
 ```
 
-## Import Shapefiles
+## Import Vector Data
 
-We will use the `rgdal` package to work with vector data in `R`. Notice that the
+Packages: `sp`, `rgdal`, and `rgeos`
+
+sp: importing, manipulating and exporting spatial data in R, and methods
+
+rgdal:  bindings to parts of the **OGR Simple Feature Library**
+    - variety of vector file formats including ESRI Shapefiles and kml. The OGR library is part of the widely used Geospatial Data Abstraction Library (GDAL). The GDAL library is the most useful freely-available library for reading and writing geospatial data. The GDAL library is well-documented (http://gdal.org/), but with a catch for R and Python programmers. The GDAL (and associated OGR) library and command line tools are all written in C and C++. Bindings are available that allow access from a variety of other languages including R and Python but the documentation is all written for the C++ version of the libraries. This can make reading the documentation rather challenging. Fortunaly, the rgdal package, providing GDAL bindings in R, is well documented with lots of examples. The same is valid for the Python libaries.
+
+Similarly, rgeos is an interface to the powerful Geometry Engine Open Source (GEOS) library for all kinds of operations on geometries (buffering, overlaying, area calculations, etc.).We will use the `rgdal` package to work with vector data in `R`. Notice that the
 `sp` package automatically loads when `rgdal` is loaded. We will also load the
 `raster` package so we can explore raster and vector spatial metadata using similar commands.
 
@@ -324,7 +334,7 @@ wv <- readOGR(dsn = "./data",   # folder name (`dsn` argument)
 
 ## Examine loaded shapefile
 
-```{r}
+```{r, eval=FALSE}
 # View description. Note the coordinate bounding box and projection info
 summary(wv)
 # just look at projection
