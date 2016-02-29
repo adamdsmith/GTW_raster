@@ -1,6 +1,7 @@
 ---
-title: "Geospatial Training Workshop: \nRaster Processing in R"
-author: "Adam Smith"
+title: "Raster Processing in R"
+subtitle: "Geospatial Training Workshop"
+author: Adam Smith, U.S. Fish & Wildlife Service
 date: "1-2 March 2016"
 output:
   ioslides_presentation:
@@ -113,7 +114,7 @@ bird_counts
 # Data Structures
 
 ## Vectors
-- 1D arrays; can hold `numeric`, `character`, or `logical` data
+- 1D; can hold `numeric`, `character`, or `logical` data
 - single data type
     
 ```{r}
@@ -121,34 +122,36 @@ eg <- c("This", "is", "a", "character", "vector")
 eg
 eg2 <- c(1, 2, 3, 4, 5, 6, 7)
 eg2
-all(is.vector(eg), is.vector(eg2))
+is.vector(eg)
+is.vector(eg2)
 ```
 
 ## Matrices
-- `numeric` vector stored in 2 dimensions (e.g., x-y direction)
+- `numeric` vector stored in 2 dimensions, rows & columns (e.g., x-y direction)
 - single-band rasters (with addn'l spatial metadata)
 
 ```{r}
-data <- rnorm(8)
+data <- rnorm(8) # `rnorm` generates random normal deviates; see `?rnorm`
 mat <- matrix(data, nrow = 2, ncol = 4)
+mat
 is.matrix(mat)
 ```
 
 ## Data Frames
 - 2D (rows and columns); most common data structure
-- each column is a vector of the *same* length
+- **each column** is a distinct vector (*cf* matrices); all columns *same* length
 - mixed data types allowed
 
 ```{r}
 # By default, R coerces character vectors to factors
 df <- data.frame(char = c("a", "b"), num = rnorm(2), stringsAsFactors = FALSE)
 df
-str(df) 
+str(df) # `str` is a useful function for exploring the structure of an object
 ```
 
 ## Arrays
 
-- `numeric` vector stored in 1 or more dimensions
+- `numeric` vector stored in 1 or more dimensions (`dim` argument, see below)
 - multi-band rasters (& spatial metadata)
 
 ```{r}
@@ -173,8 +176,8 @@ str(lst)
 > - Pathnames in R require forward slashes `/`  
 >      - `"C:/This/pathname/is/formatted/correctly.txt"`
     
-> - Working directory
->      - view current with `getwd()`
+> - Working directory (i.e., your current location)
+>      - view with `getwd()`
 >      - change with `setwd()`
     
 > - Using pathnames relative to the working directory
@@ -192,7 +195,7 @@ str(lst)
 - [StackExchange](http://stats.stackexchange.com): like Stack Overflow but for statistics 
 - [Crantastic](http://crantastic.org): search through packages on CRAN 
 
-## RStudio
+## RStudio (Integrated Development Environment)
 
 - [too many conveniences to list...](http://www.rstudio.com/wp-content/uploads/2016/01/rstudio-IDE-cheatsheet.pdf)
 - R Projects
@@ -232,21 +235,23 @@ str(lst)
 Vector data
 
 - I/O operations made possible by **OGR Simple Feature Library**
-- bindings in R provided by `rgdal` package
+- Bindings in R provided by `rgdal` package
+- Classes and methods provided by `sp` package
+- Variety of vector file formats (e.g., ESRI Shapefiles, kml)
+- Geometries operations (buffering, overlaying, area calculations, etc.)
+    - `rgeos` package &rarr; bindings to **Geometry Engine Open Source** library
 
-Packages: `sp`, `rgdal`, and `rgeos`
+Raster data
+- I/O operations made possible by **Geospatial Data Abstraction Library**
+- binding in R provided by `rgdal` package
+- classes and methods provided by `raster` package
 
-sp: importing, manipulating and exporting spatial data in R, and methods
+Additional resources
+- [CRAN Task View: Analysis of Spatial Data](https://cran.r-project.org/web/views/Spatial.html)
 
-rgdal:  bindings to parts of the **OGR Simple Feature Library**
-    - variety of vector file formats including ESRI Shapefiles and kml. The OGR library is part of the widely used Geospatial Data Abstraction Library (GDAL). The GDAL library is the most useful freely-available library for reading and writing geospatial data. The GDAL library is well-documented (http://gdal.org/), but with a catch for R and Python programmers. The GDAL (and associated OGR) library and command line tools are all written in C and C++. Bindings are available that allow access from a variety of other languages including R and Python but the documentation is all written for the C++ version of the libraries. This can make reading the documentation rather challenging. Fortunaly, the rgdal package, providing GDAL bindings in R, is well documented with lots of examples. The same is valid for the Python libaries.
-
-Similarly, rgeos is an interface to the powerful Geometry Engine Open Source (GEOS) library for all kinds of operations on geometries (buffering, overlaying, area calculations, etc.).We will use the `rgdal` package to work with vector data in `R`. Notice that the
-`sp` package automatically loads when `rgdal` is loaded. We will also load the
-`raster` package so we can explore raster and vector spatial metadata using similar commands.
-
-
-In a previous lecture you saw the overall system architecture (see figure above) and you saw how to read and write vector data from/to file into your R environment. These vector read/write operations were made possible thanks to the OGR library. The OGR library is interfaced with R thanks to the rgdal package/binding. By analogy, raster data can be read/written thanks to the GDAL library. The figure above provides an overview of the connections between these elements. GDAL stands for Geospatial Data Abstraction Library. You can check the project home page at http://www.gdal.org/ and you will be surprised to see that a lot of the software you have used in the past to read gridded geospatial data use GDAL. (i.e.: ArcGIS, QGIS, GRASS, etc). In this lesson, we will use GDAL indirectly via the raster package, which uses rgdal extensively. However, it is possible to call GDAL functionalities directly through the command line (a shell is usually provided with the GDAL binary distribution you installed on your system), which is equivalent to calling a system() command directly from within R. In addition, if you are familiar with R and its string handling utilities, it should facilitate the building of the expression that have to be passed to GDAL.
+<div class="notes">
+The GDAL library, of which the OGR library is a part, is the most useful freely-available library for reading and writing geospatial data. 
+</div>
 
 ## Raster data
 

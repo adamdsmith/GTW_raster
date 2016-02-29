@@ -56,13 +56,34 @@ attributes(lines_HARV)
 
 ```
 
-## Why use R as a GIS?
+## CRS
+The Coordinate Reference System (CRS) of spatial objects defines where they are placed on the Earth’s
+surface. You may have noticed ’proj4string ’in the summary of lnd above: the information that follows
+represents its CRS. Spatial data should always have a CRS. If no CRS information is provided, and the
+correct CRS is known, it can be set as follow:
+proj4string(lnd) <- NA_character_ # remove CRS information from lnd
+proj4string(lnd) <- CRS("+init=epsg:27700") # assign a new CRS
+R issues a warning when the CRS is changed. This is so the user knows that they are simply changing the
+CRS, not reprojecting the data. An easy way to refer to different projections is via EPSG codes.
+Under this system 27700 represents the British National Grid. ‘WGS84’ (epsg:4326) is a very commonly
+used CRS worldwide. The following code shows how to search the list of available EPSG codes and create a
+new version of lnd in WGS84:3
+EPSG <- make_EPSG() # create data frame of available EPSG codes
+EPSG[grepl("WGS 84$", EPSG$note), ] # search for WGS 84 code
+## code note prj4
+## 249 4326 # WGS 84 +proj=longlat +datum=WGS84 +no_defs
+lnd84 <- spTransform(lnd, CRS("+init=epsg:4326")) # reproject
 
+
+## Why R for spatial analysis?
+
+- R is free and open source
+- Packages
+- Active community: > 2 million users worldwide
 - Explore your data in all its dimensions
-- Implement complex and custom made algorithms and functions
 - Integrated analysis chain from download to analysis
+- Implement complex and custom made algorithms and functions
 - Automation
-- combine spatial processing with subsequent analysis
 - Make work reproducible
-- promotes collaboration
-- informs your future self
+    - promotes collaboration
+    - informs your future self
