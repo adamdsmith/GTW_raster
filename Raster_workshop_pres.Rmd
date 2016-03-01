@@ -40,22 +40,93 @@ Follow along at [rpubs.com/adamsmith_fws/GTW_raster](http://rpubs.com/adamsmith_
 
 This material represents a conglomeration of original material as well as parts adapted from:
   
-- NEON's [Data Tutorial Series](http://neondataskills.org/tutorial-series/)
-- Francesco Tonini's [Introduction to using R as a GIS](https://github.com/f-tonini/GIS610_SpatialR)
 - Wageningen UR's [Geoscripting workshop](https://geoscripting-wur.github.io/)
+- NEON's [Data Tutorial Series](http://neondataskills.org/tutorial-series/)
 - Robert Hijmans's [`raster` package vignette](https://cran.r-project.org/web/packages/raster/raster.pdf)
 
 Today's module is by no means comprehensive.  
 
-For more details, the list above is a good place to start.
+Additional resources:
+- [Applied Spatial Data Analysis with R](http://www.springer.com/us/book/9781461476177)
+- [CRAN Task View: Analysis of Spatial Data](https://cran.r-project.org/web/views/Spatial.html)
 
-See also: [Applied Spatial Data Analysis with R](http://www.springer.com/us/book/9781461476177)
+# Why R for Spatial Analysis? | An Example
+
+## These are ducks
+
+<div class="centered">
+  ![](./images/ducks.png)
+</div>
+
+## This is Nantucket Sound (MA)
+
+<div class="centered">
+  ![](./images/NS_no_xsects.png)
+</div>
+
+## This is Horseshoe Shoal
+
+<div class="centered">
+  ![](./images/Horseshoe.png)
+</div>
+
+## The Issue 
+
+- Sea ducks like Nantucket Sound in winter
+
+> - Sea ducks can be displaced by wind energy facilities (Europe)
+
+> - Are sea ducks using Horseshoe Shoal?
+
+> - Enter spatial analysis...
+
+## Step 1: Count the Birds
+
+<div class="centered">
+  ![](./images/NS_xsects.png)
+</div>
+
+## Step 1: Count the Birds
+
+<div class="centered">
+  ![](./images/segments.png)
+</div>
+
+## Step 2: Quantify Biophysical and Spatiotemporal Associations {.build}
+
+<div class="centered">
+  ![](./images/depth.png)
+</div>
+
+## Step 2: Quantify Biophysical and Spatiotemporal Associations 
+
+<div class="centered">
+  ![](./images/d2land.png)
+</div>
+
+## Step 2: Quantify Biophysical and Spatiotemporal Associations 
+
+<div class="centered">
+  ![](./images/sstrel.png)
+</div>
+
+## Why R for spatial analysis?
+
+- Free and open source
+- Active development &rarr; packages
+- Active user community: > 2 million worldwide
+- Integrated analysis chain from download to analysis
+- Makes work reproducible
+    - promotes collaboration
+    - informs your future self
+- Implement complex and custom made algorithms and functions
+    - automation
+- Explore your data in all its dimensions
 
 # R Data Types
 
 ## Object assignment (variables)
 - Left-facing arrow (`<-`) or equals sign (`=`)
-    - in RStudio, `alt + hyphen` for `<-`
 
 ```{r}
 a_number = 3
@@ -204,53 +275,36 @@ str(lst)
   ![](./images/RStudio.png)
 </div>
 
-----
-
+## Hands On #1: Easing into R
 <div id="handson" markdown="1">
-  
-<h2>Hands On #1: R Project, object creating, and relative pathnames</h2>
-
 1. In R Studio, create an R Project for today's module
-    - `File` &rarr; `New Project...` &rarr; `Existing Directory` 
-    - Navigate to "D:/GTW_raster" and click `Create Project`
+    - `File` &rarr; `New Project...` &rarr; `Existing Directory` &rarr; `Create Project`
 2. Explore help files (e.g., `?c`, `?vector`, `?list`)
-3. Create `numeric` and `character` vectors; store in `data.frame`
+3. Create `numeric` and `character` vectors; store in a `data.frame`
 4. Create a `list` of multiple `data.frame`s
 5. Experiment with relative pathnames
     - change working directory to `data` folder: `setwd("relative/path")`
     - view list of files: `list.files()`
-    - change working directory back to the `GTW_raster` folder
+    - return working directory to the `GTW_raster` folder
 </div>
 
+----
 
-# R as a GIS
+## Get R Code used in this module
+
+Assuming you're still in the `GTW_raster` working directory, type:
+
+```{r, eval = FALSE}
+dir.create("./R") # Creates new directory
+download.file("", destfile = "./R/GTW_raster.R")
+download.file("", destfile = "./R/utils.R")
+```
+
+# R for Spatial Analysis
  
----- 
+## System Architecture
 <div class="centered">
   ![Source: WageningenUR](./images/system_overview.png)
-</div>
-
-## Spatial Data I/O in R
-
-Vector data
-
-- I/O operations made possible by **OGR Simple Feature Library**
-- Bindings in R provided by `rgdal` package
-- Classes and methods provided by `sp` package
-- Variety of vector file formats (e.g., ESRI Shapefiles, kml)
-- Geometries operations (buffering, overlaying, area calculations, etc.)
-    - `rgeos` package &rarr; bindings to **Geometry Engine Open Source** library
-
-Raster data
-- I/O operations made possible by **Geospatial Data Abstraction Library**
-- binding in R provided by `rgdal` package
-- classes and methods provided by `raster` package
-
-Additional resources
-- [CRAN Task View: Analysis of Spatial Data](https://cran.r-project.org/web/views/Spatial.html)
-
-<div class="notes">
-The GDAL library, of which the OGR library is a part, is the most useful freely-available library for reading and writing geospatial data. 
 </div>
 
 ## Raster data
@@ -263,51 +317,78 @@ The GDAL library, of which the OGR library is a part, is the most useful freely-
 <div class="centered">
   ![](./images/raster_concept.png)
 </div>
-  
-## Vector data
 
-- Discrete spatial data (points, lines, polygons)
-- Think `shapefile` with/without attributes
+## Rasters in R
 
-<div class="centered">
-  ![](./images/pnt_line_poly.png)
-</div>
-  
-----
-  
-<div class="centered">
-```{r NCTC, eval=FALSE, echo=FALSE}
-library(raster); library(rgdal); library(leaflet)
-NCTC <- readOGR("./data", "nctc_boundary", verbose = FALSE)
-dem <- raster('./data/dem.img')
-pal <- colorNumeric(terrain.colors(10), values(dem))
+- Classes and methods provided by `raster` package
+- Variety of raster file formats
+    - GeoTiff, Ascii, netCDF, Erdas Imagine, ENVI, etc.
 
-# Create map
-leaflet() %>%
-  addTiles("http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-           group = "Aerial") %>%
-  addTiles("http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
-           group = "Terrain") %>%
-  addRasterImage(dem, colors = terrain.colors(10), opacity = 0.65, group = "Elevation",
-                 maxBytes = 8 * 1024 * 1024) %>%
-  addMarkers(lng = -77.803947, lat = 39.487872, 
-             popup = "YOU ARE HERE") %>%
-  addPolygons(data = NCTC, fillOpacity = 0) %>%
-  hideGroup("Elevation") %>%
-  addLegend(pal = pal, values = values(dem), title = "Elevation (m)") %>%
-  addLayersControl(baseGroups = c("Aerial", "Terrain"),
-                   overlayGroups = c("Elevation"),
-                   options = layersControlOptions(collapsed = FALSE))
+> - `raster` distinguishes three types of `Raster*` objects
+>      - `RasterLayer`: single-layer (band) raster
+>      - `RasterStack`: multi-layer raster (one or more files)
+>      - `RasterBrick`: multi-layer raster (single file)
 
+> - `RasterStack`layers must have **same extent and resolution**
+> - Expect to work on layers separately? `RasterStack`  
+> - Calculations on all layers? `RasterBrick`
+
+## Getting raster data into (and out of) R
+
+- create your own 
+    - handy when your testing out custom functions, etc.
+```{r, eval = FALSE}
+r <- raster(ncol = 50, nrow = 50)
 ```
-</div>
-  
-# Importing data into R | Data Tables and Spatial Data
 
-## Required R Packages
+- main raster reading commands correspond to `Raster*` objects:
+    - `raster()`, `stack()`, and `brick()`
+- writing raster objects to file uses `writeRaster()`
 
-- Vector data: `rgdal` and `sp`
+## Read and inspect our first raster
+
+Load DEM (elevation) for NCTC area
+```{r}
+library(raster)                 # Need to load `raster` package first
+dem <- raster("./data/dem.img") # Single-layer raster, so we use `raster()` function
+dem                             # Nice summary of object structure by simply printing it
+
+# Plot methods also exist for raster objects
+# plot(dem)
+
+# Use `writeRaster()` to write this object to a new file (e.g., after some transformation)
+# The datatype argument is optional but can make a difference with larger rasters; see ?dataType
+writeRaster(dem, filename = "./data/new_dem.img", datatype = "INT2U", overwrite = TRUE)
+```
+
+## Spatial Metadata
+
+Key metadata for raster data includes:
+
+1. **Object Type**: the class of the object
+2. **Coordinate Reference System (`CRS`)**: the projection of the data
+    - unprojected (i.e., latitude/longitude) vs. projected (e.g., UTM)
+3. **Extent**: the spatial extent (geographic area covered) of a raster in CRS
+4. **Resolution**: cell/pixel size in CRS units
+
+We can view/extract this metadata with `class()`, `crs()`, `extent()`, and `res()`, respectively
+
+**NOTE**: these methods (except `res()`) will also apply to vector data
+
+## Closer inspection of raster spatial metadata
+
+```{r}
+crs(dem)                        # CRS/projection
+
+extent(dem)                     # Spatial extent
+
+res(dem)                        # Resolution (cell dimensions in CRS units)
+```
+
+## Hands On #2: Load Required R Packages
+<div id="handson" markdown="1">
 - Raster data: `raster` and `rasterVis`
+- Vector data: `rgdal` and `sp`
 - Install with `install.packages("package name")`
 - Load functionality with `library()` or `require()`
 
@@ -319,6 +400,51 @@ library(raster)       # Primary package for working with rasters in R
 library(rasterVis)    # Some handy visualization functions for raster data
 library(dplyr)        # Handy tools for data manipulation
 ```
+</div>
+
+## Hands On #3: Load in more NCTC Raster* objects
+<div id="handson" markdown="1">
+1. Load the DEM raster and 3 additional raster files
+    - NAIP_CIR_NE.tif & NAIP_CIR_NW.tif (4-band color infrared photos)
+    - WV_habitat.img (single-layer land cover classification)
+2. Check the object type, CRS, spatial extent, and resolution
+3. Consider the following as you read in these files:
+    - which read function is the most appropriate?
+    - are CRS and extent the same?
+
+**Helpful hints**:  
+- raster files are located in the `data` directory
+- assign raster objects names that you'll remember
+</div>
+
+
+
+
+
+
+
+## Vector data
+
+- Discrete spatial data (points, lines, polygons)
+- Think `shapefile` with/without attributes
+
+<div class="centered">
+  ![](./images/pnt_line_poly.png)
+</div>
+  
+## Vector data
+
+- Classes and methods provided by `sp` package
+- Variety of vector file formats (e.g., ESRI Shapefiles, kml)
+- Geometries operations (buffering, overlaying, area calculations, etc.)
+    - `rgeos` package &rarr; bindings to **Geometry Engine Open Source** library
+
+> - Focus on a few `Spatial*` objects
+>      - `SpatialPoints*`
+>      - `SpatialLines*`
+>      - `SpatialPolygons`
+> - Each `Spatial*` class can be associated with attribute data
+>      - e.g., `SpatialPolygonsDataFrame`
 
 ## Import Data Tables
 
@@ -339,14 +465,15 @@ class(test)
 glimpse(test)
 ```
 
+## Vector data
 
-```{r}
-download.file(url = "https://github.com/adamdsmith/GTW_raster/raw/master/Data/wv.zip",
-              destfile = "./data/wvshape.zip")
-unzip("./data/wvshape.zip", exdir = "./data")
-wv <- readOGR(dsn = "./data",   # folder name (`dsn` argument)
-              layer = "wv")     # file name without extension
-```
+- Discrete spatial data (points, lines, polygons)
+- Think `shapefile` with/without attributes
+
+<div class="centered">
+  ![](./images/pnt_line_poly.png)
+</div>
+  
 
 ## Examine loaded shapefile
 
@@ -359,17 +486,7 @@ proj4string(cp.poly)
 plot(cp.poly, axes=T, col='blue', main = "CO Plateau")
 ```
 
-## Spatial Metadata
-
-Key metadata for all shapefiles include:
-
-1. **Object Type:** the class of the imported object. 
-2. **Coordinate Reference System (`CRS`):** the projection of the data.
-3. **Extent:** the spatial extent (geographic area that the shapefile covers) of 
-the shapefile. Note that the spatial extent for a shapefile represents the 
-extent for ALL spatial objects in the shapefile.
-
-We can view shapefile metadata using the `class`, `crs` and `extent` methods:
+:
 
 ```{r view-metadata, eval=FALSE }
 # view just the class for the shapefile
