@@ -330,7 +330,7 @@ download.file("https://github.com/adamdsmith/GTW_raster/raw/master/GTW_raster.R"
 
 > - `RasterStack` layers must have **same extent and resolution**
 > - Expect to work on layers separately? `RasterStack`  
-> - Calculations on all layers? `RasterBrick`
+> - Same calculations on all layers? `RasterBrick`
 
 <div class="notes">
 
@@ -342,16 +342,16 @@ download.file("https://github.com/adamdsmith/GTW_raster/raw/master/GTW_raster.R"
 
 ## Getting raster data into (and out of) R
 
-- create your own 
+- Create your own 
     - handy when your testing out custom functions, etc.
 ```{r, eval = FALSE}
 r <- raster(ncol = 50, nrow = 50)
 r[] <- rpois(ncell(r), lambda = 4)
 ```
 
-- main raster reading commands correspond to `Raster*` objects:
+- Main raster reading commands correspond to `Raster*` objects:
     - `raster()`, `stack()`, and `brick()`
-- writing raster objects to file uses `writeRaster()`
+- Writing raster objects to file uses `writeRaster()`
 
 ## Read and inspect our first raster
 
@@ -379,11 +379,10 @@ Key metadata for raster data includes:
 3. **Extent**: the spatial extent (geographic area covered) of a raster in CRS
 4. **Resolution**: cell/pixel size in CRS units
 
-We can view/extract this metadata with `class()`, `crs()`, `extent()`, and `res()`, respectively
+- View/extract this metadata with `class()`, `crs()`, `extent()`, and `res()`, respectively
+    - these methods (except `res()`) will also apply to vector data
 
-**NOTE**: these methods (except `res()`) will also apply to vector data
-
-## Closer inspection of raster spatial metadata
+## Closer Inspection of Raster Spatial Metadata
 
 ```{r}
 crs(dem)                        # CRS/projection
@@ -400,7 +399,7 @@ res(dem)                        # Resolution (cell dimensions in CRS units)
 <div id="handson" markdown="1">
 - Raster data: `raster` and `rasterVis`
 - Vector data: `rgdal` and `sp`
-- Install with `install.packages("package name")`
+- Install with `install.packages("package_name")`
 - Load functionality with `library()` or `require()`
 
 ```{r packages, message = FALSE, warning=FALSE}
@@ -423,8 +422,9 @@ library(rasterVis)    # Some handy visualization functions for raster data
     - are CRS and extent the same?
 
 **Helpful hints**:  
-- raster files are located in the `data` directory  
-- assign raster objects names that you'll remember
+
+- Raster files are located in the `data` directory  
+- Assign raster objects names that you'll remember
 </div>
 
 ## NCTC Raster Verdict: CRS Potpourri 
@@ -484,7 +484,7 @@ cir10 <- aggregate(cir, fact = 10, fun = mean) # Decrease resolution to 10 m pix
 ## Cropping Rasters
 
 - `crop()` function reduces spatial extent of Raster* object
-    - extent argument is very flexible
+    - `extent` argument is very flexible
     
 ```{r, eval = FALSE}
 # Set extent manually using `extent()` function; see ?extent
@@ -559,7 +559,7 @@ ndwi <- (cir10[[2]] - nir)/(cir10[[2]] + nir)
 ## A Quick Note on Plotting Rasters
 
 - `Raster*` objects have associated `plot`ting methods
-- plots can be built (layered) sequentially
+- Plots can be built (layered) sequentially
 
 ```{r, eval = FALSE}
 # Plot aerial imagery as base (bottom) layer
@@ -712,5 +712,12 @@ class(dem_cont)
 ## Hands On #5: Vector/Raster Interactions
 <div id="handson" markdown="1">
 1. Work through the code from "Vector Data" to "Conversions"
-2. Try buffering the `random_pts` for an `extract`ion
+2. Buffer `random_pts` during an `extract`ion
+3. Convert `mask`ed land cover to a `SpatialPolygons*` object
 </div>
+
+```{r, eval = FALSE}
+pt_buf <- extract(dem, random_pts, buffer = 20) # No `fun` means all extracted values returned
+nctc_lc <- mask(lc, nctc)
+lc_poly <- rasterToPolygons(nctc_lc, dissolve = TRUE)
+```

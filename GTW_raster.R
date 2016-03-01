@@ -445,3 +445,8 @@ class(dem_cont)
 # ## Hands On #5: Vector/Raster Interactions	
 # 1. Work through the code from "Vector Data" to "Conversions"	
 # 2. Try buffering the `random_pts` for an `extract`ion	
+
+pt_buf <- extract(dem, random_pts, buffer = 20) # No `fun` means all extracted values returned
+nctc_lc <- mask(lc, nctc)
+lc_poly <- rasterToPolygons(nctc_lc, dissolve = TRUE)
+
