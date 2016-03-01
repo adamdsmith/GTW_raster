@@ -1,6 +1,22 @@
 
-####END OF INTRODUCTION TO R IN GIS####
+## Import Data Tables
 
+- *easiest* import format is plain text, especially CSV (`read.table` or `read.csv`)
+    - R imports as a `data.frame` by default
+- many other options
+    - R's native structure (see `?save`)
+    - databases (MySQL, SQLite, Access)
+    - Excel, SAS, SPSS, DBF, etc.
+
+## Example CSV import
+
+```{r}
+download.file(url = "http://tinyurl.com/testCSV", destfile = "./data/test.csv")
+test <- read.table("./data/test.csv", header = TRUE, sep = ",")
+test <- read.csv("./data/test.csv", header = TRUE)
+class(test)
+glimpse(test)
+```
 
 ```{r eval=FALSE, include=FALSE}
 # convert .Rmd script to .R file for instruction
@@ -41,8 +57,8 @@ rmd2rscript <- function(infile,outfile){
   close(flOut)
 }
 
-infile <- 'IntroRGIS.Rmd'
-outfile <- 'IntroRGIS.R'
+infile <- 'Raster_workshop_pres.Rmd'
+outfile <- 'R/GTW_raster.R'
 
 rmd2rscript(infile, outfile)
 ```
