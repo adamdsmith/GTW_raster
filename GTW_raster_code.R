@@ -1,0 +1,593 @@
+# # R Data Types	
+# 	
+# ## Object assignment (variables)	
+# - Left-facing arrow (`<-`) or equals sign (`=`)	
+# 	
+# 	
+a_number = 3	
+a_number	
+	
+a_string <- "NCTC" 	
+a_string	
+# 	
+# 	
+# ## Common data types	
+# - `numeric`, `character` (string), and `logical` (TRUE/FALSE)	
+# 	
+# 	
+is.numeric(a_number)	
+class(a_string)	
+	
+# To specify an integer (default = numeric), use `L` after the number	
+an_integer <- 5L	
+class(an_integer)	
+	
+a_logical <- TRUE	
+class(a_logical)	
+# 	
+# 	
+# ## Additional data types	
+# - `factor` (another way of storing character data; categorical data)	
+# 	
+# 	
+a_factor <- factor(c("Each", "unique", "string", "will", "be", "a", "level"))	
+str(a_factor)	
+levels(a_factor)	
+# 	
+# 	
+# - `Dates` (another time maybe...)	
+#     - [`lubridate`](https://cran.r-project.org/web/packages/lubridate/index.html) package makes this considerably easier  	
+# 	
+# ## Missing Data	
+# 	
+# - `NA`	
+#     - used as you might expect; data is defined but missing	
+# 	
+# 	
+bird_counts <- c(1, 5, NA, 8, NA)	
+bird_counts	
+# 	
+#     	
+# - `NULL`	
+#     - absence of anything; undefined	
+#     - commonly used as default for optional function parameters	
+# 	
+# 	
+bird_counts <- c(1, 5, NULL, 8, NULL)	
+bird_counts	
+# 	
+# 	
+# # Data Structures	
+# 	
+# ## Vectors	
+# - 1D; can hold `numeric`, `character`, or `logical` data	
+# - single data type	
+#     	
+# 	
+eg <- c("This", "is", "a", "character", "vector")	
+eg	
+eg2 <- c(1, 2, 3, 4, 5, 6, 7)	
+eg2	
+is.vector(eg)	
+is.vector(eg2)	
+# 	
+# 	
+# ## Matrices	
+# - `numeric` vector stored in 2 dimensions, rows & columns (e.g., x-y direction)	
+# - single-band rasters (with addn'l spatial metadata)	
+# 	
+# 	
+data <- rnorm(8) # `rnorm` generates random normal deviates; see `?rnorm`	
+mat <- matrix(data, nrow = 2, ncol = 4)	
+mat	
+is.matrix(mat)	
+# 	
+# 	
+# ## Data Frames	
+# - 2D (rows and columns); most common data structure	
+# - **each column** is a distinct vector (*cf* matrices); all columns *same* length	
+# - mixed data types allowed	
+# 	
+# 	
+# By default, R coerces character vectors to factors	
+df <- data.frame(char = c("a", "b"), num = rnorm(2), stringsAsFactors = FALSE)	
+df	
+str(df) # `str` is a useful function for exploring the structure of an object	
+# 	
+# 	
+# ## Arrays	
+# 	
+# - `numeric` vector stored in 1 or more dimensions (`dim` argument, see below)	
+# - multi-band rasters (& spatial metadata)	
+# 	
+# 	
+arr <- array(rnorm(8), dim = c(2, 2, 2))	
+arr	
+# 	
+# 	
+# ## Lists	
+# 	
+# - containers for any combination of objects or data structures	
+# 	
+# 	
+lst <- list(eg, mat, df, arr, list(eg, eg2))	
+str(lst) 	
+# 	
+# 	
+# ## Navigating files in R	
+# 	
+# - Pathnames are character strings	
+#     - single (`'single'`) or double (`"double"`) quotes work	
+# 	
+# > - Pathnames in R require forward slashes `/`  	
+# >      - `"C:/This/pathname/is/formatted/correctly.txt"`	
+#     	
+# > - Working directory (i.e., your current location)	
+# >      - view with `getwd()`	
+# >      - change with `setwd()`	
+#     	
+# > - Using pathnames relative to the working directory	
+# >      - current directory denoted with a single period `.`; `setwd("./data")`	
+# >      - go back a directory with two periods `..`; `setwd("..")`	
+# 	
+# ## Getting Help in R	
+# 	
+# - `?function` will give you the associated help page (`?proj4string`)	
+# - `example(function)` runs an example(s) of the function, if available	
+# - `??searchterm` searches in all packages on CRAN (`??spTransform`)	
+# - [rseek.org](http://rseek.org) is the R Google	
+# - [Google](http://www.google.com) your error message with package ("Failure during raster IO" raster R)	
+# - Search tags in [Stack Overflow](http://stackoverflow.com/) (e.g., [R] [raster] [projection])	
+# - [StackExchange](http://stats.stackexchange.com): like Stack Overflow but for statistics 	
+# - [Crantastic](http://crantastic.org): search through packages on CRAN 	
+# 	
+# ## RStudio (Integrated Development Environment)	
+# 	
+# - [too many conveniences to list...](http://www.rstudio.com/wp-content/uploads/2016/01/rstudio-IDE-cheatsheet.pdf)	
+# - R Projects	
+# 	
+# <div class="centered">	
+#   ![](./images/RStudio.png)	
+# </div>	
+# 	
+# ## Hands On #1: Easing into R	
+# <div id="handson" markdown="1">	
+# 1. In R Studio, create an R Project for today's module	
+#     - `File` &rarr; `New Project...` &rarr; `Existing Directory` &rarr; `Create Project`	
+# 2. Explore help files (e.g., `?c`, `?vector`, `?list`)	
+# 3. Create `numeric` and `character` vectors; store in a `data.frame`	
+# 4. Create a `list` of multiple `data.frame`s	
+# 5. Experiment with relative pathnames	
+#     - change working directory to `data` folder: `setwd("relative/path")`	
+#     - view list of files: `list.files()`	
+#     - return working directory to the `GTW_raster` folder	
+# </div>	
+# 	
+# ----	
+# 	
+# ## Get R Code used in this module	
+# 	
+# Assuming you're still in the `GTW_raster` working directory, type:	
+# 	
+# 	
+dir.create("./R") # Creates new directory	
+download.file("", destfile = "./R/GTW_raster.R")	
+download.file("", destfile = "./R/utils.R")	
+# 	
+# 	
+# # R for Spatial Analysis	
+#  	
+# ## System Architecture	
+# <div class="centered">	
+#   ![Source: WageningenUR](./images/system_overview.png)	
+# </div>	
+# 	
+# ## Raster data	
+# 	
+# - Divides space in cells (pixels; rectangles) of equal size	
+#     - for a given coordinate reference system (CRS)	
+# - Can represent continuous or categorical data	
+#     - examples?	
+# 	
+# <div class="centered">	
+#   ![](./images/raster_concept.png)	
+# </div>	
+# 	
+# ## Rasters in R	
+# 	
+# - Classes and methods provided by `raster` package	
+# - Variety of raster file formats	
+#     - GeoTiff, Ascii, netCDF, Erdas Imagine, ENVI, etc.	
+# 	
+# > - `raster` distinguishes three types of `Raster*` objects	
+# >      - `RasterLayer`: single-layer (band) raster	
+# >      - `RasterStack`: multi-layer raster (one or more files)	
+# >      - `RasterBrick`: multi-layer raster (single file)	
+# 	
+# > - `RasterStack` layers must have **same extent and resolution**	
+# > - Expect to work on layers separately? `RasterStack`  	
+# > - Calculations on all layers? `RasterBrick`	
+# 	
+# <div class="notes">	
+# 	
+# <div class="centered">	
+#   ![](./images/rasterbands.png)	
+# </div>	
+# 	
+# </div>	
+# 	
+# ## Getting raster data into (and out of) R	
+# 	
+# - create your own 	
+#     - handy when your testing out custom functions, etc.	
+# 	
+r <- raster(ncol = 50, nrow = 50)	
+r[] <- rpois(ncell(r), lambda = 4)	
+# 	
+# 	
+# - main raster reading commands correspond to `Raster*` objects:	
+#     - `raster()`, `stack()`, and `brick()`	
+# - writing raster objects to file uses `writeRaster()`	
+# 	
+# ## Read and inspect our first raster	
+# 	
+# Load DEM (elevation) for NCTC area	
+# 	
+library(raster)	
+# 	
+# 	
+# Single-layer raster, so we use `raster()` function	
+dem <- raster("./data/dem.img") 	
+dem # Nice summary of object structure/metadata by simply printing it	
+	
+# Use `writeRaster()` to write this object to a new file (e.g., after some transformation)	
+# The datatype argument can make a difference with larger rasters; see ?dataType	
+writeRaster(dem, filename = "./data/new_dem.img", datatype = "INT2U", overwrite = TRUE)	
+# 	
+# 	
+# ## Spatial Metadata	
+# 	
+# Key metadata for raster data includes:	
+# 	
+# 1. **Object Type**: the class of the object (e.g., layer, stack, or brick)	
+# 2. **Coordinate Reference System (`CRS`)**: the projection of the data	
+#     - unprojected (i.e., latitude/longitude) vs. projected (e.g., UTM)	
+# 3. **Extent**: the spatial extent (geographic area covered) of a raster in CRS	
+# 4. **Resolution**: cell/pixel size in CRS units	
+# 	
+# We can view/extract this metadata with `class()`, `crs()`, `extent()`, and `res()`, respectively	
+# 	
+# **NOTE**: these methods (except `res()`) will also apply to vector data	
+# 	
+# ## Closer inspection of raster spatial metadata	
+# 	
+# 	
+crs(dem)                        # CRS/projection	
+	
+extent(dem)                     # Spatial extent	
+	
+res(dem)                        # Resolution (cell dimensions in CRS units)	
+	
+# Plot methods exist for raster objects	
+# plot(dem)	
+# 	
+# 	
+# ## Hands On #2: Load Required R Packages	
+# <div id="handson" markdown="1">	
+# - Raster data: `raster` and `rasterVis`	
+# - Vector data: `rgdal` and `sp`	
+# - Install with `install.packages("package name")`	
+# - Load functionality with `library()` or `require()`	
+# 	
+# 	
+# These packages should all be installed on your machine	
+library(rgdal)        # R bindings for the Geospatial Data Abstraction Library    	
+library(raster)       # Primary package for working with rasters in R	
+# library(sp)         # For vector data/shapefiles; loaded with raster package	
+library(rasterVis)    # Some handy visualization functions for raster data	
+library(dplyr)        # Handy tools for data manipulation	
+# 	
+# </div>	
+# 	
+# ## Hands On #3: Load in more NCTC Raster* objects	
+# <div id="handson" markdown="1">	
+# 1. Load the DEM raster and 3 additional raster files	
+#     - NAIP_CIR_NE.tif & NAIP_CIR_NW.tif (4-band color infrared photos)	
+#     - WV_habitat.img (single-layer land cover classification)	
+# 2. Plot each, then check the object type, CRS, spatial extent, and resolution	
+# 3. Consider the following:	
+#     - which read function is the most appropriate?	
+#     - are CRS and extent the same?	
+# 	
+# **Helpful hints**:  	
+# - raster files are located in the `data` directory  	
+# - assign raster objects names that you'll remember	
+# </div>	
+# 	
+# ## NCTC Raster Verdict: CRS Potpourri 	
+# 	
+lc <- raster("./data/WV_habitat.img")	
+cirnw <- brick("./data/NAIP_CIR_NW.tif")	
+cirne <- brick("./data/NAIP_CIR_NE.tif")	
+# 	
+# 	
+crs(dem)    # dem.img	
+crs(lc)     # WV_habitat.img	
+crs(cirnw)  # NAIP_CIR_NW.tif	
+crs(cirne)  # NAIP_CIR_NE.tif	
+# 	
+# 	
+# ## Raster QC/QA	
+# 	
+# - Histograms are useful for spotting bad values or outliers	
+# 	
+hist(dem, main = "Histogram of DEM values", xlab = "Elevation (meters)")	
+# 	
+# 	
+# ## Reprojecting Rasters	
+# 	
+# - Use `projectRaster()` to change an *existing* CRS	
+# - Typically, we pull the CRS from another object that we want to align with	
+# 	
+# Reproject land cover to CRS of color infrared imagery	
+# Keep resolution at 30 meters (force it)	
+# Land cover it categorical, so use "nearest neighbor" method	
+lc <- projectRaster(lc, crs = crs(cirnw), res = 30, method = "ngb")	
+# 	
+# 	
+# ## Merging Rasters	
+# 	
+# - Color infrared images have **same CRS & resolution**	
+# - `merge()` function combines multiple Raster* objects	
+#     - if objects overlap, priority determined by order of arguments	
+# 	
+# 	
+# Merge two color infrared photos for NCTC area	
+# This will take a few moments	
+cir <- merge(cirnw, cirne)	
+# 	
+# 	
+# ## Adjusting Resolution	
+# 	
+# - Bigger cells &rarr; `aggregate()` + grouping function	
+# - Smaller cells &rarr; `disaggregate()`	
+# - e.g., Aggregate CIR to 10 meters to reduce file size	
+# 	
+cir10 <- aggregate(cir, fact = 10, fun = mean) # Decrease resolution to 10 m pixels	
+# 	
+# - For non-integer adjustments, see `?resample`	
+# - For simple shifts of cell centers, see `?shift` or `?extent`	
+# 	
+# ## Cropping Rasters	
+# 	
+# - `crop()` function reduces spatial extent of Raster* object	
+#     - extent argument is very flexible	
+#     	
+# 	
+# Set extent manually using `extent()` function; see ?extent	
+dem_man <- crop(dem, extent(xmin = -77.85, xmax = -77.76, ymin = 39.45, ymax = 39.475))	
+	
+# Create extent object interactively	
+plot(dem)	
+ex <- drawExtent(show = TRUE) # Select 2 points (opposite corners)	
+dem_ex <- crop(dem, ex)	
+plot(dem_ex)	
+	
+# Use another Raster* (or vector) object	
+# Requires same CRS (i.e., overlapping extents)	
+dem_crop <- crop(dem, dem_ex)	
+# 	
+# 	
+# ## Raster Algebra	
+# 	
+# - Arithmetic on a single `RasterLayer` object is trivial	
+# 	
+dem_ft <- dem * 3.28084   # Convert meters to feet	
+dem_400 <- dem_ft > 400   # Create indicator of pixels > 400 ft in elevation	
+# 	
+# 	
+# - Likewise with multiple `RasterLayers` of **identical CRS, extent, and resolution**	
+#     - see also `?overlay` and `?calc`	
+# 	
+zilch <- dem + (dem * -1)  # elevation - elevation = 0	
+# 	
+# 	
+# - Replace values using indexing	
+# 	
+dem_400[dem_400 == 1] <- -9999  # reassign values of 1 with -9999	
+# 	
+# 	
+# ## Calculations of multi-layered rasters	
+# 	
+# - Algebra applies equally to `RasterStack`s and `RasterBrick`s	
+#     - applied separately to each layer	
+# 	
+cir10_cent <- scale(cir10, center = TRUE, scale = FALSE) # Subtract mean of each layer	
+# 	
+# 	
+# - Summary functions act across layers	
+# 	
+cir10_max <- max(cir10)    # Maximum value for a pixel in all layers	
+cir10_mean <- mean(cir10)  # Mean value for each pixel across layers	
+cir10_sum <- sum(cir10)    # Sum of values across layers for each pixel	
+# 	
+# 	
+# ## Subsetting multi-layered rasters	
+#     	
+# - Subsetting layers from `RasterStack`s and `RasterBrick`s	
+#     - double square brackets `[[]]` used to index target layer 	
+#     - subsetted layer essentialy treated as `RasterLayer` object	
+# 	
+# Extract red and near infrared (NIR) layers	
+nlayers(cir10)	
+red <- cir10[[1]]   # Extract first layer of multi-layer raster	
+nir <- cir10[[4]]   # Extract fourth layer of multi-layer raster	
+# 	
+# 	
+# - e.g., Normalized Difference Vegetation Index (NDVI) 	
+# $$\frac{(NIR - R)}{(NIR + R)}$$	
+# 	
+ndvi <- (nir - red) / (nir + red)	
+# 	
+# 	
+ndwi <- (cir10[[2]] - nir)/(cir10[[2]] + nir)	
+# 	
+# 	
+# ## A Quick Note on Plotting Rasters	
+# 	
+# - `Raster*` objects have associated `plot`ting methods	
+# - plots can be built (layered) sequentially	
+# 	
+# 	
+# Plot aerial imagery as base (bottom) layer	
+plotRGB(cir10, main = "NCTC area") # see `?plotRGB` for more information 	
+	
+# To add layers, two key arguments: `alpha` (transparency) and `add=TRUE`	
+plot(lc, alpha = 0.4, add = TRUE)  # Add landcover classes on top	
+	
+# For a slightly different persective, use `rasterVis` package	
+levelplot(lc)	
+levelplot(dem)	
+levelplot(cir10)	
+# 	
+# 	
+# ## A (Slightly) More Exciting Plot	
+# 	
+# 	
+slope <- terrain(dem, opt='slope')	
+aspect <- terrain(dem, opt='aspect')	
+hs <- hillShade(slope, aspect, angle = 40, direction = 270)	
+plot(hs, col = grey(0:100/100), legend = FALSE, main = "NCTC area")	
+plot(dem, col=terrain.colors(25, alpha = 0.35), add=TRUE)	
+# 	
+# 	
+# ## Hands On #4: Raster operations and algebra	
+# <div id="handson" markdown="1">	
+# 1. Work through the code from "Raster QC/QA" to "Plotting"	
+# 2. Reproject the DEM to match the CIR imagery	
+#     - Use 30 meter resolution and the `bilinear` method	
+# 3. Plot raster output as you go	
+# 4. Calculate the Normalized Difference *Water* Index	
+# $$\frac{(G - NIR)}{(G + NIR)}$$	
+#     - what do NDWI values > 0.5 seem to represent?	
+# </div>	
+# 	
+# ----	
+# 	
+dem <- projectRaster(dem, crs = crs(cir10))	
+plot(ndwi > 0.5, main = "NDWI Values > 0.5")	
+# 	
+# 	
+# ## Vector data	
+# 	
+# - Discrete spatial data (points, lines, polygons)	
+# - Think `shapefile` with/without attributes	
+# 	
+# <div class="centered">	
+#   ![](./images/pnt_line_poly.png)	
+# </div>	
+#   	
+# ## Vector data in R	
+# 	
+# - Classes and methods provided by `sp` package	
+# - Variety of vector file formats (e.g., ESRI Shapefiles, kml)	
+# - Geometries operations (buffering, overlaying, area calculations, etc.)	
+#     - `rgeos` package &rarr; bindings to **Geometry Engine Open Source** library	
+# 	
+# > - Highlight a few `Spatial*` objects	
+# >      - `SpatialPoints*`	
+# >      - `SpatialLines*`	
+# >      - `SpatialPolygons`	
+# > - Each `Spatial*` class can be associated with attribute data	
+# >      - e.g., `SpatialPolygonsDataFrame`	
+# 	
+# ## Importing shapefiles	
+# 	
+# - Use `readOGR()`	
+#     - slight change of syntax compared to rasters	
+# 	
+# Load NCTC property boundary	
+nctc <- readOGR("./data",         #directory where our shapefile lives	
+                "nctc_boundary")  #name of the shapefile (without the extension)	
+	
+class(nctc)	
+	
+# See attribute table (actually a `data.frame`)	
+# nctc@data	
+	
+# Use `raster` functions to explore object	
+crs(nctc)      # CRS/projection	
+extent(nctc)   # Maximum extent of all contained spatial objects	
+# 	
+# 	
+# ## Reprojecting Spatial* objects	
+# 	
+# - Typically easier to reproject `Spatial*` objects than rasters	
+# - Same idea as rasters, but different function: `spTransform()`	
+# 	
+# Reproject NCTC boundary to match rasters	
+nctc <- spTransform(nctc, CRSobj = crs(cir10))	
+	
+# Can overlay rasters/plots with matching CRS using `add=TRUE` 	
+plotRGB(cir10)	
+plot(lc, alpha = 0.4, add=TRUE)	
+plot(nctc, add=TRUE, lwd=2)	
+# 	
+# 	
+# ## Cropping/Masking Rasters with Vectors	
+# 	
+# - Often handy (and faster) to reduce rasters to focus area	
+# - We've already seen cropping by reducing the `extent` of an object	
+# - `mask()` useful with nearly all spatial objects	
+#     - default sets raster values outside mask to `NA`	
+#     - note also the useful `inverse` argument	
+# 	
+nctc_cir10 <- mask(cir10, mask = nctc)	
+plotRGB(nctc_cir10)	
+	
+nctc_dem <- mask(dem, mask = nctc)	
+plot(nctc_dem)	
+# 	
+# 	
+# ## Extract Raster Values from Vector Data	
+# - Vector data can be `Spatial*` or `extent` object	
+# - `extract()` 	
+#     - `fun` argument handles intersection with >1 pixel	
+#         - e.g., `SpatialLines` or `SpatialPolygons`	
+#     - `buffer` argument to buffer points before extraction	
+#     - `df` argument outputs `data.frame`	
+# 	
+(avg_elev <- extract(dem, nctc, fun = mean))	
+	
+pts <- download.file("https://github.com/adamdsmith/GTW_raster/raw/master/Data/random_pts.rda",  	
+                     destfile = "./data/random_pts.rda")	
+load("./data/random_pts.rda", verbose = TRUE)	
+(pt_lc <- extract(lc, random_pts, df = TRUE))	
+	
+plot(lc)	
+plot(random_pts, add=TRUE)	
+# 	
+# 	
+# ## Raster &harr; Vector Conversions	
+# 	
+# **Vector to raster**  	
+# 	
+# - `rasterize()`	
+# 	
+nctc_grd <- rasterize(nctc, lc)	
+# 	
+# 	
+# **Raster to vector**  	
+# 	
+# - `rasterToPoints()`, `rasterToContour()`, and `rasterToPolygons()`	
+#     - for latter, `dissolve = TRUE` is handy argument	
+# 	
+dem_cont <- rasterToContour(dem)	
+class(dem_cont)	
+# 	
+# 	
+# ## Hands On #5: Vector/Raster Interactions	
+# <div id="handson" markdown="1">	
+# 1. Work through the code from "Vector Data" to "Conversions"	
+# 2. Try buffering the `random_pts` for an `extract`ion	
+# </div>	
