@@ -390,9 +390,33 @@ crs(dem)                        # CRS/projection
 extent(dem)                     # Spatial extent
 
 res(dem)                        # Resolution (cell dimensions in CRS units)
+```
 
-# Plot methods exist for raster objects
-# plot(dem)
+## A Quick Note on Plotting Rasters
+
+- `Raster*` objects have associated `plot`ting methods
+- Plots can be built (layered) sequentially
+
+```{r, eval = FALSE}
+# Plot aerial imagery as base (bottom) layer
+plotRGB(cir10, main = "NCTC area") # see `?plotRGB` for more information 
+
+# To add layers, two key arguments: `alpha` (transparency) and `add=TRUE`
+plot(dem, alpha = 0.4, add = TRUE)  # Add elevation on top
+
+# For a slightly different persective, use `rasterVis` package
+levelplot(dem)
+levelplot(cir10)
+```
+
+## A (Slightly) More Exciting Plot
+
+```{r, eval = FALSE}
+slope <- terrain(dem, opt='slope')
+aspect <- terrain(dem, opt='aspect')
+hs <- hillShade(slope, aspect, angle = 40, direction = 270)
+plot(hs, col = grey(0:100/100), legend = FALSE, main = "NCTC area")
+plot(dem, col=terrain.colors(25, alpha = 0.35), add=TRUE)
 ```
 
 ## Hands On #2: Load Required R Packages
@@ -556,37 +580,9 @@ ndvi <- (nir - red) / (nir + red)
 ndwi <- (cir10[[2]] - nir)/(cir10[[2]] + nir)
 ```
 
-## A Quick Note on Plotting Rasters
-
-- `Raster*` objects have associated `plot`ting methods
-- Plots can be built (layered) sequentially
-
-```{r, eval = FALSE}
-# Plot aerial imagery as base (bottom) layer
-plotRGB(cir10, main = "NCTC area") # see `?plotRGB` for more information 
-
-# To add layers, two key arguments: `alpha` (transparency) and `add=TRUE`
-plot(lc, alpha = 0.4, add = TRUE)  # Add landcover classes on top
-
-# For a slightly different persective, use `rasterVis` package
-levelplot(lc)
-levelplot(dem)
-levelplot(cir10)
-```
-
-## A (Slightly) More Exciting Plot
-
-```{r, eval = FALSE}
-slope <- terrain(dem, opt='slope')
-aspect <- terrain(dem, opt='aspect')
-hs <- hillShade(slope, aspect, angle = 40, direction = 270)
-plot(hs, col = grey(0:100/100), legend = FALSE, main = "NCTC area")
-plot(dem, col=terrain.colors(25, alpha = 0.35), add=TRUE)
-```
-
 ## Hands On #4: Raster operations and algebra
 <div id="handson" markdown="1">
-1. Work through the code from "Raster QC/QA" to "Plotting"
+1. Work through the code from "Raster QC/QA" to "Subsetting"
 2. Reproject the DEM to match the CIR imagery
     - Use 30 meter resolution and the `bilinear` method
 3. Plot raster output as you go

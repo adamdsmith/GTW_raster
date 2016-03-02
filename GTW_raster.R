@@ -131,14 +131,15 @@ download.file("https://github.com/adamdsmith/GTW_raster/raw/master/GTW_raster.R"
 # - create your own 	
 #     - handy when your testing out custom functions, etc.	
 # 	
+library(raster)	
 r <- raster(ncol = 50, nrow = 50)	
 r[] <- rpois(ncell(r), lambda = 4)	
+plot(r)
 
 # ## Read and inspect our first raster	
 # 	
 # Load DEM (elevation) for NCTC area	
 # 	
-library(raster)	
 
 # Single-layer raster, so we use `raster()` function	
 dem <- raster("./data/dem.img") 	
@@ -171,8 +172,30 @@ extent(dem)                     # Spatial extent
 	
 res(dem)                        # Resolution (cell dimensions in CRS units)	
 	
-# Plot methods exist for raster objects	
+# ## A Quick Note on Plotting Rasters	
+# 	
+# - `Raster*` objects have associated `plot`ting methods	
+# - plots can be built (layered) sequentially	
+# 	
 plot(dem)	
+# 	
+# Plot aerial imagery as base (bottom) layer	
+plotRGB(cir10, main = "NCTC area") # see `?plotRGB` for more information 	
+
+# To add layers, two key arguments: `alpha` (transparency) and `add=TRUE`	
+plot(dem, alpha = 0.4, add = TRUE)  # Add elevation on top w/transparency	
+
+# For a slightly different persective, use `rasterVis` package	
+levelplot(dem)	
+levelplot(cir10)	
+
+# ## A (Slightly) More Exciting Plot	
+
+slope <- terrain(dem, opt='slope')	
+aspect <- terrain(dem, opt='aspect')	
+hs <- hillShade(slope, aspect, angle = 40, direction = 270)	
+plot(hs, col = grey(0:100/100), legend = FALSE, main = "NCTC area")	
+plot(dem, col=terrain.colors(25, alpha = 0.35), add=TRUE)	
 
 # ## Hands On #2: Load Required R Packages	
 
@@ -306,31 +329,6 @@ nir <- cir10[[4]]   # Extract fourth layer of multi-layer raster
 ndvi <- (nir - red) / (nir + red)	
 
 ndwi <- (cir10[[2]] - nir)/(cir10[[2]] + nir)	
-
-# ## A Quick Note on Plotting Rasters	
-# 	
-# - `Raster*` objects have associated `plot`ting methods	
-# - plots can be built (layered) sequentially	
-# 	
-# 	
-# Plot aerial imagery as base (bottom) layer	
-plotRGB(cir10, main = "NCTC area") # see `?plotRGB` for more information 	
-	
-# To add layers, two key arguments: `alpha` (transparency) and `add=TRUE`	
-plot(lc, alpha = 0.4, add = TRUE)  # Add landcover classes on top	
-	
-# For a slightly different persective, use `rasterVis` package	
-levelplot(lc)	
-levelplot(dem)	
-levelplot(cir10)	
-
-# ## A (Slightly) More Exciting Plot	
-
-slope <- terrain(dem, opt='slope')	
-aspect <- terrain(dem, opt='aspect')	
-hs <- hillShade(slope, aspect, angle = 40, direction = 270)	
-plot(hs, col = grey(0:100/100), legend = FALSE, main = "NCTC area")	
-plot(dem, col=terrain.colors(25, alpha = 0.35), add=TRUE)	
 
 # ## Hands On #4: Raster operations and algebra	
 # 1. Work through the code from "Raster QC/QA" to "Plotting"	
