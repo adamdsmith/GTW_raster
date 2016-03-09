@@ -179,7 +179,8 @@ res(dem)                        # Resolution (cell dimensions in CRS units)
 # 	
 plot(dem)	
 # 	
-# Plot aerial imagery as base (bottom) layer	
+# Plot aerial imagery as base (bottom) layer
+# This line won't yet run; you'll create `cir10` later
 plotRGB(cir10, main = "NCTC area") # see `?plotRGB` for more information 	
 
 # To add layers, two key arguments: `alpha` (transparency) and `add=TRUE`	
@@ -187,7 +188,6 @@ plot(dem, alpha = 0.4, add = TRUE)  # Add elevation on top w/transparency
 
 # For a slightly different persective, use `rasterVis` package	
 levelplot(dem)	
-levelplot(cir10)	
 
 # ## A (Slightly) More Exciting Plot	
 
@@ -275,14 +275,16 @@ cir10 <- aggregate(cir, fact = 10, fun = mean) # Decrease resolution to 10 m pix
 dem_man <- crop(dem, extent(xmin = -77.85, xmax = -77.76, ymin = 39.45, ymax = 39.475))	
 	
 # Create extent object interactively	
-plot(dem)                     # Helpful to plot raster first for reference	
-ex <- drawExtent(show = TRUE) # Select 2 points (opposite corners)	
-dem_ex <- crop(dem, ex)       # Crop using newly-created extent object	
-plot(dem_ex)                  # Plot cropped raster	
+# Uncomment this to use the code
+# See ?drawExtent first
+#plot(dem)                     # Helpful to plot raster first for reference	
+#ex <- drawExtent(show = TRUE) # Select 2 points (opposite corners)	
+#dem_ex <- crop(dem, ex)       # Crop using newly-created extent object	
+#plot(dem_ex)                  # Plot cropped raster	
 	
 # Use another Raster* (or vector) object	
 # Requires same CRS (i.e., overlapping extents)	
-dem_crop <- crop(dem, dem_ex)	
+#dem_crop <- crop(dem, dem_ex)	
 
 # ## Raster Algebra	
 # 	

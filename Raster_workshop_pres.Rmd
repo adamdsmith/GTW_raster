@@ -111,6 +111,10 @@ Additional resources:
   ![](./images/sstrel.png)
 </div>
 
+----
+
+< Scoter model animation >
+
 ## Why R for spatial analysis?
 
 - Free and open source
